@@ -1,6 +1,7 @@
 package com.bessarez.ecommercemobile.ui.adapters;
 
 public class CardProduct {
+    private Long id;
     private String image;
     private String title;
     private String price;
@@ -8,10 +9,19 @@ public class CardProduct {
     public CardProduct() {
     }
 
-    public CardProduct(String image, String title, String price) {
+    public CardProduct(Long id, String image, String title, String price) {
+        this.id = id;
         this.image = image;
         this.title = title;
         this.price = price;
+    }
+
+    public Long getId() {
+        return id;
+    }
+
+    public void setId(Long id) {
+        this.id = id;
     }
 
     public String getImage() {

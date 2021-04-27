@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <style name="Theme.EcommerceMobile.ButtonMatchParentSecondary">
+        <item name="android:layout_width">match_parent</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:textAllCaps">false</item>
+        <item name="android:fontFamily">@font/semibold</item>
+        <item name="android:textSize">15sp</item>
+        <item name="android:padding">10dp</item>
+        <item name="android:background">@color/secondary</item>
+        <item name="android:textColor">@color/blue_gray</item>
+    </style>
+
+    <style name="Theme.EcommerceMobile.ButtonMatchParentSecondaryLight">
+        <item name="android:layout_width">match_parent</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:textAllCaps">false</item>
+        <item name="android:fontFamily">@font/semibold</item>
+        <item name="android:textSize">15sp</item>
+        <item name="android:padding">10dp</item>
+        <item name="android:background">@color/secondary_light</item>
+        <item name="android:textColor">@color/blue_gray</item>
+    </style>
+</resources>

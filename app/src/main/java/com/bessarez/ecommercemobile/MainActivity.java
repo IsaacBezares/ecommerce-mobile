@@ -12,6 +12,7 @@ import android.widget.TextView;
 
 import com.bessarez.ecommercemobile.models.RegisteredUser;
 import com.bessarez.ecommercemobile.ui.LoginActivity;
+import com.bessarez.ecommercemobile.ui.dialogs.ProductOrderQuantityDialog;
 import com.google.android.material.navigation.NavigationView;
 
 import androidx.navigation.NavController;
@@ -106,5 +107,4 @@ public class MainActivity extends AppCompatActivity {
             usernameOrLogin.setText("Hello, Log in :)");
         }
     }
-
 }

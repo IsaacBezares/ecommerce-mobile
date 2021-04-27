@@ -1,0 +1,82 @@
+<?xml version="1.0" encoding="utf-8"?>
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/white"
+    tools:context=".ui.ProductFragment">
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:padding="15dp">
+
+        <TextView
+            android:id="@+id/tv_product_title"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_marginTop="15dp"
+            android:fontFamily="@font/light"
+            android:textColor="@color/blue_gray"
+            android:textSize="20sp" />
+
+        <ImageView
+            android:id="@+id/iv_product"
+            android:layout_width="match_parent"
+            android:layout_height="200dp"
+            android:layout_below="@+id/tv_product_title"
+            android:layout_marginTop="20dp"
+            tools:layout_editor_absoluteX="38dp"
+            tools:layout_editor_absoluteY="137dp" />
+
+        <TextView
+            android:id="@+id/tv_product_price"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_below="@id/iv_product"
+            android:layout_marginTop="20dp"
+            android:fontFamily="@font/regular"
+            android:textColor="@color/blue_gray"
+            android:textSize="30sp" />
+
+        <TextView
+            android:id="@+id/tv_product_stock"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_below="@+id/tv_product_price"
+            android:layout_marginTop="5dp"
+            android:fontFamily="@font/semibold"
+            android:textColor="@color/black" />
+
+        <androidx.appcompat.widget.AppCompatButton
+            android:id="@+id/btn_quantity"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textColor="@color/black"
+            android:paddingStart="10dp"
+            android:paddingEnd="10dp"
+            android:layout_below="@id/tv_product_stock"
+            android:background="@color/gray"
+            android:drawableEnd="@drawable/ic_keyboard_arrow_down"
+            android:textAllCaps="false"
+            android:drawableTint="@color/blue_gray" />
+
+
+        <androidx.appcompat.widget.AppCompatButton
+            android:id="@+id/btn_buy_now"
+            style="@style/Theme.EcommerceMobile.ButtonMatchParentSecondary"
+            android:layout_below="@+id/btn_quantity"
+            android:layout_marginTop="20dp"
+            android:text="@string/buy_now" />
+
+        <androidx.appcompat.widget.AppCompatButton
+            android:id="@+id/btn_add_to_cart"
+            style="@style/Theme.EcommerceMobile.ButtonMatchParentSecondaryLight"
+            android:layout_below="@id/btn_buy_now"
+            android:layout_marginTop="5dp"
+            android:text="@string/add_to_cart" />
+
+    </RelativeLayout>
+
+</ScrollView>

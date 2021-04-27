@@ -25,7 +25,7 @@
             android:layout_marginTop="20dp"
             android:fontFamily="@font/semibold"
             android:text="@string/create_one"
-            android:textColor="@color/s"
+            android:textColor="@color/secondary"
             android:textSize="15sp"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintHorizontal_bias="0.498"

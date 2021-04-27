@@ -8,12 +8,12 @@ import android.view.ViewGroup;
 
 import androidx.annotation.NonNull;
 import androidx.fragment.app.Fragment;
+import androidx.navigation.Navigation;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.bessarez.ecommercemobile.R;
 import com.bessarez.ecommercemobile.models.CarouselImage;
-import com.bessarez.ecommercemobile.models.Product;
 import com.bessarez.ecommercemobile.models.apimodels.ResponseApiCarouselImages;
 import com.bessarez.ecommercemobile.models.apimodels.ResponseApiProducts;
 import com.bessarez.ecommercemobile.ui.adapters.CardProduct;
@@ -33,7 +33,7 @@ import retrofit2.Response;
 
 import static android.content.ContentValues.TAG;
 
-public class HomeFragment extends Fragment {
+public class HomeFragment extends Fragment implements CardProductAdapter.OnProductListener {
 
     List<CardProduct> products;
     CardProductAdapter cardProductAdapter;
@@ -65,8 +65,8 @@ public class HomeFragment extends Fragment {
 
                 ResponseApiProducts responseApiProducts = response.body();
 
-                for (Product product : responseApiProducts.getEmbeddedServices()) {
-                    products.add(new CardProduct(product.getImageUrl(), product.getName(), String.valueOf(product.getPrice())));
+                for (com.bessarez.ecommercemobile.models.Product product : responseApiProducts.getEmbeddedServices()) {
+                    products.add(new CardProduct(product.getId(),product.getImageUrl(), product.getName(), String.valueOf(product.getPrice())));
                     cardProductAdapter.notifyDataSetChanged();
                 }
             }
@@ -77,7 +77,7 @@ public class HomeFragment extends Fragment {
             }
         });
 
-        cardProductAdapter = new CardProductAdapter(products, getContext());
+        cardProductAdapter = new CardProductAdapter(products, getContext(),this::onProductClick);
         recyclerView.setAdapter(cardProductAdapter);
     }
 
@@ -108,5 +108,12 @@ public class HomeFragment extends Fragment {
                 Log.e(TAG, "onFailure: ", t);
             }
         });
+    }
+
+    @Override
+    public void onProductClick(int position) {
+        Long productId = products.get(position).getId();
+        HomeFragmentDirections.ActionNavHomeToProductFragment action = HomeFragmentDirections.actionNavHomeToProductFragment(productId);
+        Navigation.findNavController(getView()).navigate(action);
     }
 }

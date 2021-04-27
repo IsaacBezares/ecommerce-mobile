@@ -1,7 +1,6 @@
 package com.bessarez.ecommercemobile.ui.adapters;
 
 import android.content.Context;
-import android.net.Uri;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -21,17 +20,22 @@ public class CardProductAdapter extends RecyclerView.Adapter<CardProductAdapter.
     private LayoutInflater mInflater;
     private Context mContext;
 
-    public CardProductAdapter(List<CardProduct> mData, Context mContext) {
+    private OnProductListener mOnProductListener;
+
+    public CardProductAdapter(List<CardProduct> mData, Context mContext, OnProductListener onProductListener) {
         this.mInflater = LayoutInflater.from(mContext);
         this.mData = mData;
         this.mContext = mContext;
+        this.mOnProductListener = onProductListener;
     }
+
+
 
     @NonNull
     @Override
     public CardProductAdapter.ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
         View view = mInflater.inflate(R.layout.card_product, parent, false);
-        return new CardProductAdapter.ViewHolder(view);
+        return new CardProductAdapter.ViewHolder(view,mOnProductListener);
     }
 
     @Override
@@ -50,15 +54,28 @@ public class CardProductAdapter extends RecyclerView.Adapter<CardProductAdapter.
         return mData.size();
     }
 
-    public class ViewHolder extends RecyclerView.ViewHolder {
+    public class ViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener {
         AppCompatImageView image;
         AppCompatTextView title, price;
+        OnProductListener onProductListener;
 
-        ViewHolder(View itemView){
+        ViewHolder(View itemView, OnProductListener onProductListener){
             super(itemView);
             image = itemView.findViewById(R.id.iv_product);
             title = itemView.findViewById(R.id.tv_product_title);
             price = itemView.findViewById(R.id.tv_product_price);
+            this.onProductListener = onProductListener;
+            itemView.setOnClickListener(this);
         }
+
+
+        @Override
+        public void onClick(View v) {
+            onProductListener.onProductClick(getAdapterPosition());
+        }
+    }
+
+    public interface OnProductListener{
+        void onProductClick(int position);
     }
 }

@@ -10,7 +10,11 @@
         android:id="@+id/nav_home"
         android:name="com.bessarez.ecommercemobile.ui.HomeFragment"
         android:label="@string/menu_home"
-        tools:layout="@layout/fragment_home" />
+        tools:layout="@layout/fragment_home" >
+        <action
+            android:id="@+id/action_nav_home_to_productFragment"
+            app:destination="@id/nav_product" />
+    </fragment>
 
     <fragment
         android:id="@+id/nav_orders"
@@ -27,4 +31,24 @@
         android:id="@+id/nav_settings"
         android:name="com.bessarez.ecommercemobile.ui.SettingsFragment"
         android:label="settings" />
+    <fragment
+        android:id="@+id/nav_product"
+        android:name="com.bessarez.ecommercemobile.ui.ProductFragment"
+        android:label="@string/product"
+        tools:layout="@layout/fragment_product">
+        <argument
+            android:name="productId"
+            app:argType="long" />
+        <action
+            android:id="@+id/action_nav_product_to_productOrderQuantityDialog"
+            app:destination="@id/nav_product_quantity_dialog" />
+    </fragment>
+    <dialog
+        android:id="@+id/nav_product_quantity_dialog"
+        android:name="com.bessarez.ecommercemobile.ui.dialogs.ProductOrderQuantityDialog"
+        android:label="Quantity" >
+        <argument
+            android:name="stock"
+            app:argType="integer" />
+    </dialog>
 </navigation>

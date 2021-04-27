@@ -37,4 +37,9 @@
     <string name="logout">Logout</string>
     <string name="settings">settings</string>
     <string name="root_preferences">root preferences</string>
+    <string name="buy_now">Buy Now</string>
+    <string name="add_to_cart">Add to Cart</string>
+    <string name="available_stock">Available stock: </string>
+    <string name="product">Product</string>
+    <string name="quantity">Quantity:</string>
 </resources>

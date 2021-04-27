@@ -8,9 +8,14 @@ public class ProductCategory {
 
     private Long id;
     private String category;
-    private Set<Product> products = new HashSet<>();
+//    private Set<Product> products = new HashSet<>();
 
     public ProductCategory() {
+    }
+
+    public ProductCategory(Long id, String category) {
+        this.id = id;
+        this.category = category;
     }
 
     public Long getId() {
@@ -29,13 +34,13 @@ public class ProductCategory {
         this.category = category;
     }
 
-    public Set<Product> getProducts() {
+    /*public Set<Product> getProducts() {
         return products;
     }
 
     public void setProducts(Set<Product> products) {
         this.products = products;
-    }
+    }*/
 
     @Override
     public boolean equals(Object o) {

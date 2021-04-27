@@ -16,12 +16,12 @@ public class Product {
     private int quantity;
     private String imageUrl;
     private ProductCategory productCategory;
-    private Set<UserViewedProduct> userViewedProducts = new HashSet<>();
+//    private Set<UserViewedProduct> userViewedProducts = new HashSet<>();
 
     public Product() {
     }
 
-    public Product(Long id, String name, String ean13, float price, float productWeight, String shortDesc, String longDesc, int stock, int quantity, String imageUrl, ProductCategory productCategory, Set<UserViewedProduct> userViewedProducts) {
+    public Product(Long id, String name, String ean13, float price, float productWeight, String shortDesc, String longDesc, int stock, int quantity, String imageUrl, ProductCategory productCategory) {
         this.id = id;
         this.name = name;
         this.ean13 = ean13;
@@ -33,7 +33,7 @@ public class Product {
         this.quantity = quantity;
         this.imageUrl = imageUrl;
         this.productCategory = productCategory;
-        this.userViewedProducts = userViewedProducts;
+//        this.userViewedProducts = userViewedProducts;
     }
 
     public Long getId() {
@@ -124,13 +124,13 @@ public class Product {
         this.productCategory = productCategory;
     }
 
-    public Set<UserViewedProduct> getUserViewedProducts() {
+    /*public Set<UserViewedProduct> getUserViewedProducts() {
         return userViewedProducts;
     }
 
     public void setUserViewedProducts(Set<UserViewedProduct> userViewedProducts) {
         this.userViewedProducts = userViewedProducts;
-    }
+    }*/
 
     @Override
     public boolean equals(Object o) {
@@ -161,7 +161,7 @@ public class Product {
                 ", quantity=" + quantity +
                 ", imageUrl='" + imageUrl + '\'' +
                 ", productCategory=" + productCategory +
-                ", userViewedProducts=" + userViewedProducts +
+//                ", userViewedProducts=" + userViewedProducts +
                 '}';
     }
 }

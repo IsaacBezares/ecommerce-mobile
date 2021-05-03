@@ -11,6 +11,8 @@ import androidx.appcompat.widget.AppCompatTextView;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.bessarez.ecommercemobile.R;
+import com.bessarez.ecommercemobile.interfaces.OnProductListener;
+import com.bessarez.ecommercemobile.ui.models.CardProduct;
 import com.squareup.picasso.Picasso;
 
 import java.util.List;
@@ -33,13 +35,13 @@ public class CardProductAdapter extends RecyclerView.Adapter<CardProductAdapter.
 
     @NonNull
     @Override
-    public CardProductAdapter.ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
+    public ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
         View view = mInflater.inflate(R.layout.card_product, parent, false);
-        return new CardProductAdapter.ViewHolder(view,mOnProductListener);
+        return new ViewHolder(view,mOnProductListener);
     }
 
     @Override
-    public void onBindViewHolder(@NonNull CardProductAdapter.ViewHolder holder, int position) {
+    public void onBindViewHolder(@NonNull ViewHolder holder, int position) {
         String textImg = mData.get(position).getImage();
         String textTitle = mData.get(position).getTitle();
         String textPrice = "$ " + mData.get(position).getPrice();
@@ -73,9 +75,5 @@ public class CardProductAdapter extends RecyclerView.Adapter<CardProductAdapter.
         public void onClick(View v) {
             onProductListener.onProductClick(getAdapterPosition());
         }
-    }
-
-    public interface OnProductListener{
-        void onProductClick(int position);
     }
 }

@@ -1,19 +1,19 @@
 package com.bessarez.ecommercemobile.ui;
 
+import android.content.Context;
+import android.content.SharedPreferences;
 import android.net.Uri;
 import android.os.Bundle;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.widget.AppCompatButton;
-import androidx.appcompat.widget.AppCompatSpinner;
 import androidx.fragment.app.Fragment;
 
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.view.Window;
 import android.widget.ImageView;
 import android.widget.TextView;
 
@@ -21,7 +21,9 @@ import com.bessarez.ecommercemobile.R;
 import com.bessarez.ecommercemobile.models.OrderProduct;
 import com.bessarez.ecommercemobile.models.Product;
 import com.bessarez.ecommercemobile.models.ProductCategory;
-import com.bessarez.ecommercemobile.models.apimodels.ResponseApiProduct;
+import com.bessarez.ecommercemobile.models.apimodels.ApiRegisteredUser;
+import com.bessarez.ecommercemobile.models.apimodels.ApiWishProduct;
+import com.bessarez.ecommercemobile.models.apimodels.ApiProduct;
 import com.bessarez.ecommercemobile.ui.dialogs.ProductOrderQuantityDialog;
 import com.squareup.picasso.Picasso;
 
@@ -34,15 +36,9 @@ import static com.bessarez.ecommercemobile.connector.ApiClient.getApiService;
 
 public class ProductFragment extends Fragment implements ProductOrderQuantityDialog.OnQuantityListener {
 
-    @Override
-    public void sendQuantity(Integer quantity) {
-        orderProduct.setQuantity(quantity);
-        btnQuantity.setText(getString(R.string.quantity) + " " + quantity);
-    }
-
-    TextView tvProductTitle, tvProductPrice, tvProductStock;
+    TextView tvProductTitle, tvProductPrice, tvProductStock, tvProductDescription;
     ImageView ivProduct;
-    AppCompatButton btnQuantity, btnBuyNow, btnAddToCart;
+    AppCompatButton btnQuantity, btnBuyNow, btnAddToCart, btnAddToWishList;
 
     OrderProduct orderProduct;
 
@@ -67,33 +63,38 @@ public class ProductFragment extends Fragment implements ProductOrderQuantityDia
             return;
         }
 
-        Call<ResponseApiProduct> call = getApiService().getProduct(productId);
-        call.enqueue(new Callback<ResponseApiProduct>() {
+        Call<ApiProduct> call = getApiService().getProduct(productId);
+        call.enqueue(new Callback<ApiProduct>() {
             @Override
-            public void onResponse(Call<ResponseApiProduct> call, Response<ResponseApiProduct> response) {
+            public void onResponse(Call<ApiProduct> call, Response<ApiProduct> response) {
                 if (!response.isSuccessful()) {
                     Log.d(TAG, "Algo falló");
                     return;
                 }
 
-                ResponseApiProduct responseProduct = response.body();
+                ApiProduct responseProduct = response.body();
                 Product product = makeProduct(responseProduct);
-                updateViewsData(product);
-
                 orderProduct.setProduct(product);
                 orderProduct.setQuantity(1);
+                updateViewsData(product);
 
             }
 
             @Override
-            public void onFailure(Call<ResponseApiProduct> call, Throwable t) {
+            public void onFailure(Call<ApiProduct> call, Throwable t) {
             }
         });
     }
 
+    @Override
+    public void sendQuantity(Integer quantity) {
+        orderProduct.setQuantity(quantity);
+        btnQuantity.setText(getString(R.string.quantity) + " " + quantity);
+    }
+
     //Methods for readability
 
-    private Product makeProduct(ResponseApiProduct product) {
+    private Product makeProduct(ApiProduct product) {
         Long id = product.getId();
         String name = product.getName();
         String ean13 = product.getEan13();
@@ -111,14 +112,17 @@ public class ProductFragment extends Fragment implements ProductOrderQuantityDia
         return new Product(id, name, ean13, price, productWeight, shortDesc, longDesc, stock, quantity, imageUrl, productCategory);
     }
 
-    private void bindViews(View view){
+    private void bindViews(View view) {
+
         tvProductTitle = view.findViewById(R.id.tv_product_title);
         tvProductPrice = view.findViewById(R.id.tv_product_price);
         tvProductStock = view.findViewById(R.id.tv_product_stock);
+        tvProductDescription = view.findViewById(R.id.tv_product_description);
         ivProduct = view.findViewById(R.id.iv_product);
         btnQuantity = view.findViewById(R.id.btn_quantity);
         btnBuyNow = view.findViewById(R.id.btn_buy_now);
         btnAddToCart = view.findViewById(R.id.btn_add_to_cart);
+        btnAddToWishList = view.findViewById(R.id.btn_add_to_wish_list);
 
         btnQuantity.setText(getString(R.string.quantity) + " 1");
         btnQuantity.setOnClickListener(new View.OnClickListener() {
@@ -126,14 +130,47 @@ public class ProductFragment extends Fragment implements ProductOrderQuantityDia
             public void onClick(View v) {
                 ProductOrderQuantityDialog dialog = new ProductOrderQuantityDialog(orderProduct.getProduct().getStock());
                 dialog.setTargetFragment(ProductFragment.this, 1);
-                dialog.show(getParentFragmentManager(),ProductOrderQuantityDialog.TAG);
+                dialog.show(getParentFragmentManager(), ProductOrderQuantityDialog.TAG);
+            }
+        });
+
+        btnAddToWishList.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+
+                SharedPreferences preferences = view.getContext().getSharedPreferences("credentials", Context.MODE_PRIVATE);
+                Long userId = preferences.getLong("userId", 0);
+
+                ApiRegisteredUser user = new ApiRegisteredUser(userId);
+                user.setId(userId);
+
+                ApiProduct thisProduct = new ApiProduct(orderProduct.getProduct().getId());
+
+                Call<ApiWishProduct> call = getApiService().addProductToWishList(new ApiWishProduct(user,thisProduct));
+                call.enqueue(new Callback<ApiWishProduct>() {
+                    @Override
+                    public void onResponse(Call<ApiWishProduct> call, Response<ApiWishProduct> response) {
+                        Log.d(TAG, "onResponse: " + response.message() );
+                        if (!response.isSuccessful()) {
+                            Log.d(TAG, "Algo falló");
+                            return;
+                        }
+                    }
+
+                    @Override
+                    public void onFailure(Call<ApiWishProduct> call, Throwable t) {
+                        System.out.println("Algo falló");
+                        t.printStackTrace();
+                    }
+                });
             }
         });
     }
 
-    private void updateViewsData(Product product){
+    private void updateViewsData(Product product) {
         tvProductTitle.setText(product.getName());
         tvProductPrice.setText("$" + product.getPrice());
+        tvProductDescription.setText(product.getLongDesc());
         String availableStock = getString(R.string.available_stock);
         tvProductStock.setText(availableStock + " " + product.getStock());
 

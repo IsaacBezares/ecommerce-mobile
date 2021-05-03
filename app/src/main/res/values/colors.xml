@@ -14,8 +14,8 @@
     <color name="secondary_light">#ff9277</color>
     <color name="secondary_lighter">#e99183</color>
     <color name="secondary_dark">#ad5249</color>
-    <color name="secondary_dar_lighter">#b22f22</color>
-    <color name="gray">#a6a6a6</color>
+    <color name="secondary_dark_lighter">#b22f22</color>
+    <color name="gray">#9B9B9B</color>
     <color name="gray_dark">#7d7d7d</color>
     <color name="gray_light">#e1e2e1</color>
     <color name="gray_extralight">#f5f5f6</color>

@@ -1,14 +1,14 @@
 package com.bessarez.ecommercemobile.models.apimodels;
 
-public class ResponseApiLogin {
+public class ApiToken {
 
 
     private String token;
 
-    public ResponseApiLogin() {
+    public ApiToken() {
     }
 
-    public ResponseApiLogin(String token) {
+    public ApiToken(String token) {
         this.token = token;
     }
 

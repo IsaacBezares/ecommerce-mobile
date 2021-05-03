@@ -2,7 +2,7 @@ package com.bessarez.ecommercemobile.models.apimodels;
 
 import com.google.gson.annotations.SerializedName;
 
-public class ResponseApiProduct {
+public class ApiProduct {
     @SerializedName("id")
     private Long id;
 
@@ -32,6 +32,10 @@ public class ResponseApiProduct {
 
     @SerializedName("imageUrl")
     private String imageUrl;
+
+    public ApiProduct(Long id) {
+        this.id = id;
+    }
 
     @SerializedName("productCategory")
     private Category productCategory;

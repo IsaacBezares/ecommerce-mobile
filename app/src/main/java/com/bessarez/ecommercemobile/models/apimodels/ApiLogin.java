@@ -2,17 +2,17 @@ package com.bessarez.ecommercemobile.models.apimodels;
 
 import com.google.gson.annotations.SerializedName;
 
-public class RequestLogin {
+public class ApiLogin {
     @SerializedName("email")
     private String email;
 
     @SerializedName("password")
     private String password;
 
-    public RequestLogin() {
+    public ApiLogin() {
     }
 
-    public RequestLogin(String email, String password) {
+    public ApiLogin(String email, String password) {
         this.email = email;
         this.password = password;
     }

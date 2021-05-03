@@ -4,20 +4,18 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".ui.LoginActivity"
-    style="@style/Theme.AppCompat.Light.NoActionBar">
-    
+    tools:context=".ui.LoginFragment">
+
     <ImageView
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:src="@drawable/fondo"
         android:scaleType="centerCrop"
-        >
-    </ImageView>
+        android:src="@drawable/fondo"></ImageView>
 
     <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent">
+
         <TextView
             android:id="@+id/tvCreateAccount"
             android:layout_width="wrap_content"

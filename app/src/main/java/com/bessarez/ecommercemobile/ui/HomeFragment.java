@@ -1,28 +1,44 @@
 package com.bessarez.ecommercemobile.ui;
 
+import android.content.Context;
+import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.LayoutInflater;
+import android.view.Menu;
+import android.view.MenuInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.TextView;
 
 import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
+import androidx.appcompat.app.ActionBar;
 import androidx.fragment.app.Fragment;
+import androidx.navigation.NavController;
+import androidx.navigation.NavDirections;
+import androidx.navigation.NavOptions;
 import androidx.navigation.Navigation;
+import androidx.navigation.ui.NavigationUI;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.bessarez.ecommercemobile.MainActivity;
 import com.bessarez.ecommercemobile.R;
+import com.bessarez.ecommercemobile.interfaces.OnProductListener;
 import com.bessarez.ecommercemobile.models.CarouselImage;
-import com.bessarez.ecommercemobile.models.apimodels.ResponseApiCarouselImages;
-import com.bessarez.ecommercemobile.models.apimodels.ResponseApiProducts;
-import com.bessarez.ecommercemobile.ui.adapters.CardProduct;
+import com.bessarez.ecommercemobile.models.apimodels.ApiCarouselImages;
+import com.bessarez.ecommercemobile.models.apimodels.ApiProducts;
+import com.bessarez.ecommercemobile.ui.models.CardProduct;
 import com.bessarez.ecommercemobile.ui.adapters.CardProductAdapter;
 
 import static com.bessarez.ecommercemobile.connector.ApiClient.getApiService;
 
 import com.denzcoskun.imageslider.ImageSlider;
 import com.denzcoskun.imageslider.models.SlideModel;
+import com.google.android.material.navigation.NavigationView;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -33,19 +49,38 @@ import retrofit2.Response;
 
 import static android.content.ContentValues.TAG;
 
-public class HomeFragment extends Fragment implements CardProductAdapter.OnProductListener {
+public class HomeFragment extends Fragment implements OnProductListener {
 
     List<CardProduct> products;
     CardProductAdapter cardProductAdapter;
+    Context mContext;
+
+
+    /*@Override
+    public void onActivityCreated(@Nullable Bundle savedInstanceState) {
+        super.onActivityCreated(savedInstanceState);
+        ActionBar actionBar = ((MainActivity) getActivity()).getSupportActionBar();
+        actionBar.setDisplayShowTitleEnabled(false);
+    }*/
 
     public View onCreateView(@NonNull LayoutInflater inflater,
                              ViewGroup container, Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_home, container, false);
+        mContext = view.getContext();
+
+        setHasOptionsMenu(true);
 
         loadSlider(view);
         loadRecycler(view);
 
         return view;
+    }
+
+    @Override
+    public void onCreateOptionsMenu(@NonNull Menu menu, @NonNull MenuInflater inflater) {
+        super.onCreateOptionsMenu(menu, inflater);
+        menu.clear();
+        inflater.inflate(R.menu.home_menu, menu);
     }
 
     private void loadRecycler(View view) {
@@ -54,30 +89,30 @@ public class HomeFragment extends Fragment implements CardProductAdapter.OnProdu
         recyclerView.setNestedScrollingEnabled(false);
         recyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
 
-        Call<ResponseApiProducts> call = getApiService().getProducts();
-        call.enqueue(new Callback<ResponseApiProducts>() {
+        Call<ApiProducts> call = getApiService().getProducts();
+        call.enqueue(new Callback<ApiProducts>() {
             @Override
-            public void onResponse(Call<ResponseApiProducts> call, Response<ResponseApiProducts> response) {
+            public void onResponse(Call<ApiProducts> call, Response<ApiProducts> response) {
                 if (!response.isSuccessful()) {
                     Log.d(TAG, "Algo falló");
                     return;
                 }
 
-                ResponseApiProducts responseApiProducts = response.body();
+                ApiProducts apiProducts = response.body();
 
-                for (com.bessarez.ecommercemobile.models.Product product : responseApiProducts.getEmbeddedServices()) {
-                    products.add(new CardProduct(product.getId(),product.getImageUrl(), product.getName(), String.valueOf(product.getPrice())));
+                for (com.bessarez.ecommercemobile.models.Product product : apiProducts.getEmbeddedServices()) {
+                    products.add(new CardProduct(product.getId(), product.getImageUrl(), product.getName(), String.valueOf(product.getPrice())));
                     cardProductAdapter.notifyDataSetChanged();
                 }
             }
 
             @Override
-            public void onFailure(Call<ResponseApiProducts> call, Throwable t) {
+            public void onFailure(Call<ApiProducts> call, Throwable t) {
 
             }
         });
 
-        cardProductAdapter = new CardProductAdapter(products, getContext(),this::onProductClick);
+        cardProductAdapter = new CardProductAdapter(products, getContext(), this);
         recyclerView.setAdapter(cardProductAdapter);
     }
 
@@ -85,18 +120,18 @@ public class HomeFragment extends Fragment implements CardProductAdapter.OnProdu
         ImageSlider imageSlider = view.findViewById(R.id.silder);
         List<SlideModel> slideModelList = new ArrayList<>();
 
-        Call<ResponseApiCarouselImages> call = getApiService().getCarouselImages();
-        call.enqueue(new Callback<ResponseApiCarouselImages>() {
+        Call<ApiCarouselImages> call = getApiService().getCarouselImages();
+        call.enqueue(new Callback<ApiCarouselImages>() {
             @Override
-            public void onResponse(Call<ResponseApiCarouselImages> call, Response<ResponseApiCarouselImages> response) {
+            public void onResponse(Call<ApiCarouselImages> call, Response<ApiCarouselImages> response) {
                 if (!response.isSuccessful()) {
                     Log.d(TAG, "Algo falló");
                     return;
                 }
 
-                ResponseApiCarouselImages responseApiCarouselImages = response.body();
+                ApiCarouselImages apiCarouselImages = response.body();
                 //fills carousel with images from api
-                for (CarouselImage carouselImage : responseApiCarouselImages.getEmbeddedServices()
+                for (CarouselImage carouselImage : apiCarouselImages.getEmbeddedServices()
                 ) {
                     slideModelList.add(new SlideModel(carouselImage.getImageUrl()));
                 }
@@ -104,8 +139,8 @@ public class HomeFragment extends Fragment implements CardProductAdapter.OnProdu
             }
 
             @Override
-            public void onFailure(Call<ResponseApiCarouselImages> call, Throwable t) {
-                Log.e(TAG, "onFailure: ", t);
+            public void onFailure(Call<ApiCarouselImages> call, Throwable t) {
+                Log.e(TAG, "onFailure: Prob timeout, printStackTrace for more info (HomeFrag)");
             }
         });
     }
@@ -115,5 +150,14 @@ public class HomeFragment extends Fragment implements CardProductAdapter.OnProdu
         Long productId = products.get(position).getId();
         HomeFragmentDirections.ActionNavHomeToProductFragment action = HomeFragmentDirections.actionNavHomeToProductFragment(productId);
         Navigation.findNavController(getView()).navigate(action);
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(@NonNull MenuItem item) {
+        if (item.getItemId() == R.id.nav_search){
+            NavDirections action = HomeFragmentDirections.actionNavHomeToSearchFragment();
+            Navigation.findNavController(getView()).navigate(action);
+        }
+        return super.onOptionsItemSelected(item);
     }
 }

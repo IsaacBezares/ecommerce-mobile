@@ -1,14 +1,19 @@
 package com.bessarez.ecommercemobile.interfaces;
 
 import com.bessarez.ecommercemobile.models.RegisteredUser;
-import com.bessarez.ecommercemobile.models.apimodels.RequestLogin;
-import com.bessarez.ecommercemobile.models.apimodels.ResponseApiCarouselImages;
-import com.bessarez.ecommercemobile.models.apimodels.ResponseApiLogin;
-import com.bessarez.ecommercemobile.models.apimodels.ResponseApiProductCategories;
-import com.bessarez.ecommercemobile.models.apimodels.ResponseApiProducts;
-import com.bessarez.ecommercemobile.models.apimodels.ResponseApiRegisteredUsers;
-import com.bessarez.ecommercemobile.models.apimodels.ResponseApiUserViewedProducts;
-import com.bessarez.ecommercemobile.models.apimodels.ResponseApiProduct;
+import com.bessarez.ecommercemobile.models.apimodels.ApiLogin;
+import com.bessarez.ecommercemobile.models.apimodels.ApiProductsSearch;
+import com.bessarez.ecommercemobile.models.apimodels.ApiSuggestedProducts;
+import com.bessarez.ecommercemobile.models.apimodels.ApiWishProduct;
+import com.bessarez.ecommercemobile.models.apimodels.ApiCarouselImages;
+import com.bessarez.ecommercemobile.models.apimodels.ApiToken;
+import com.bessarez.ecommercemobile.models.apimodels.ApiProductCategories;
+import com.bessarez.ecommercemobile.models.apimodels.ApiProducts;
+import com.bessarez.ecommercemobile.models.apimodels.ApiRegisteredUsers;
+import com.bessarez.ecommercemobile.models.apimodels.ApiUserViewedProducts;
+import com.bessarez.ecommercemobile.models.apimodels.ApiProduct;
+import com.bessarez.ecommercemobile.models.apimodels.ApiWishProducts;
+import com.bessarez.ecommercemobile.models.apimodels.ApiRecentSearches;
 
 import retrofit2.Call;
 import retrofit2.http.Body;
@@ -20,21 +25,21 @@ import retrofit2.http.Path;
 public interface EcommerceApi {
 
     @GET("/carousel_images")
-    Call<ResponseApiCarouselImages> getCarouselImages();
+    Call<ApiCarouselImages> getCarouselImages();
 
     @GET("/product_categories")
-    Call<ResponseApiProductCategories> getProductCategories();
+    Call<ApiProductCategories> getProductCategories();
 
     @GET("/products")
-    Call<ResponseApiProducts> getProducts();
+    Call<ApiProducts> getProducts();
 
     @GET("/products/{id}")
-    Call<ResponseApiProduct> getProduct(
+    Call<ApiProduct> getProduct(
             @Path("id") Long id
     );
 
     @GET("/registered_users")
-    Call<ResponseApiRegisteredUsers> getRegisteredUsers();
+    Call<ApiRegisteredUsers> getRegisteredUsers();
 
     @GET("/registered_users/email/{email}")
     Call<RegisteredUser> getRegisteredUserByEmail(
@@ -42,9 +47,24 @@ public interface EcommerceApi {
             @Header("Authorization") String token);
 
     @GET("/user_viewed_products")
-    Call<ResponseApiUserViewedProducts> getUserViewedProducts();
+    Call<ApiUserViewedProducts> getUserViewedProducts();
 
     @POST("/login")
-    Call<ResponseApiLogin> login(@Body RequestLogin requestLogin);
+    Call<ApiToken> login(@Body ApiLogin apiLogin);
+
+    @POST("/wish_products")
+    Call<ApiWishProduct> addProductToWishList(@Body ApiWishProduct apiWishProduct);
+
+    @GET("/wish_products/user/{id}")
+    Call<ApiWishProducts> getWishListProducts(@Path("id") Long id);
+
+    @GET("/suggested_products/{query}")
+    Call<ApiSuggestedProducts> getSuggestedProducts(@Path("query") String query);
+
+    @GET("/recent_searches/{userId}")
+    Call<ApiRecentSearches> getRecentSearches(@Path("userId") Long userId);
+
+    @GET("/products/search/{query}")
+    Call<ApiProducts> getSearchResults(@Path("query") String query);
 
 }

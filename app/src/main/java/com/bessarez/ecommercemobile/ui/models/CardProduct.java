@@ -1,4 +1,4 @@
-package com.bessarez.ecommercemobile.ui.adapters;
+package com.bessarez.ecommercemobile.ui.models;
 
 public class CardProduct {
     private Long id;

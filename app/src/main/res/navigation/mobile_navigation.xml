@@ -14,6 +14,12 @@
         <action
             android:id="@+id/action_nav_home_to_productFragment"
             app:destination="@id/nav_product" />
+        <action
+            android:id="@+id/action_nav_home_to_searchFragment"
+            app:destination="@id/nav_search" />
+        <action
+            android:id="@+id/action_nav_home_to_loginFragment"
+            app:destination="@id/nav_login" />
     </fragment>
 
     <fragment
@@ -26,7 +32,11 @@
         android:id="@+id/nav_wish_list"
         android:name="com.bessarez.ecommercemobile.ui.WishListFragment"
         android:label="@string/menu_wish_list"
-        tools:layout="@layout/fragment_wish_list" />
+        tools:layout="@layout/fragment_wish_list" >
+        <action
+            android:id="@+id/action_nav_wish_list_to_nav_product"
+            app:destination="@id/nav_product" />
+    </fragment>
     <fragment
         android:id="@+id/nav_settings"
         android:name="com.bessarez.ecommercemobile.ui.SettingsFragment"
@@ -39,16 +49,40 @@
         <argument
             android:name="productId"
             app:argType="long" />
-        <action
-            android:id="@+id/action_nav_product_to_productOrderQuantityDialog"
-            app:destination="@id/nav_product_quantity_dialog" />
     </fragment>
-    <dialog
-        android:id="@+id/nav_product_quantity_dialog"
-        android:name="com.bessarez.ecommercemobile.ui.dialogs.ProductOrderQuantityDialog"
-        android:label="Quantity" >
+    <fragment
+        android:id="@+id/nav_search"
+        android:name="com.bessarez.ecommercemobile.ui.SearchFragment"
+        android:label="@string/blank"
+        tools:layout="@layout/fragment_search" >
+        <action
+            android:id="@+id/action_nav_search_to_nav_product"
+            app:destination="@id/nav_product" />
+        <action
+            android:id="@+id/action_nav_search_to_searchableFragment"
+            app:destination="@id/nav_search_result"
+            app:popUpTo="@id/nav_home"
+            app:popUpToInclusive="false" />
+    </fragment>
+    <fragment
+        android:id="@+id/nav_login"
+        android:name="com.bessarez.ecommercemobile.ui.LoginFragment"
+        android:label="@string/blank"
+        tools:layout="@layout/fragment_login">
+        <action
+            android:id="@+id/action_loginFragment_to_nav_home"
+            app:destination="@id/nav_home" />
+    </fragment>
+    <fragment
+        android:id="@+id/nav_search_result"
+        android:name="com.bessarez.ecommercemobile.ui.SearchResultFragment"
+        android:label="@string/products"
+        tools:layout="@layout/fragment_search_result">
         <argument
-            android:name="stock"
-            app:argType="integer" />
-    </dialog>
+            android:name="query"
+            app:argType="string" />
+        <action
+            android:id="@+id/action_nav_search_result_to_nav_product"
+            app:destination="@id/nav_product" />
+    </fragment>
 </navigation>

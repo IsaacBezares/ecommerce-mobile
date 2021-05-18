@@ -51,7 +51,6 @@ public class LoginFragment extends Fragment implements View.OnClickListener {
     }
 
     private void saveUserData(String token, String email) {
-
         Call<RegisteredUser> call = getApiService().getRegisteredUserByEmail(email, token);
         call.enqueue(new Callback<RegisteredUser>() {
             @Override
@@ -77,6 +76,7 @@ public class LoginFragment extends Fragment implements View.OnClickListener {
 
             @Override
             public void onFailure(Call<RegisteredUser> call, Throwable t) {
+                t.printStackTrace();
             }
         });
     }
@@ -88,7 +88,6 @@ public class LoginFragment extends Fragment implements View.OnClickListener {
             public void onResponse(Call<ApiToken> call, Response<ApiToken> response) {
                 if (response.isSuccessful()) {
                     String token = response.body().getToken();
-                    System.out.println(response.body().getToken());
                     if (token.split("\\.").length == 3) {
                         btnLogin.setEnabled(false);
                         btnLogin.setClickable(false);

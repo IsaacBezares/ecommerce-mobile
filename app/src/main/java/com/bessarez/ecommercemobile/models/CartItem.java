@@ -2,23 +2,20 @@ package com.bessarez.ecommercemobile.models;
 
 import java.util.Objects;
 
-public class OrderProduct {
+public class CartItem {
 
     private Long id;
-
     private int quantity;
-
-    private UserOrder userOrder;
-
+    private Cart cart;
     private Product product;
 
-    public OrderProduct() {
+    public CartItem() {
     }
 
-    public OrderProduct(Long id, int quantity, UserOrder userOrder, Product product) {
+    public CartItem(Long id, int quantity, Cart cart, Product product) {
         this.id = id;
         this.quantity = quantity;
-        this.userOrder = userOrder;
+        this.cart = cart;
         this.product = product;
     }
 
@@ -38,12 +35,12 @@ public class OrderProduct {
         this.quantity = quantity;
     }
 
-    public UserOrder getUserOrder() {
-        return userOrder;
+    public Cart getCart() {
+        return cart;
     }
 
-    public void setUserOrder(UserOrder userOrder) {
-        this.userOrder = userOrder;
+    public void setCart(Cart cart) {
+        this.cart = cart;
     }
 
     public Product getProduct() {
@@ -58,8 +55,8 @@ public class OrderProduct {
     public boolean equals(Object o) {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
-        OrderProduct that = (OrderProduct) o;
-        return id.equals(that.id);
+        CartItem cartItem = (CartItem) o;
+        return id.equals(cartItem.id);
     }
 
     @Override
@@ -69,10 +66,10 @@ public class OrderProduct {
 
     @Override
     public String toString() {
-        return "OrderProduct{" +
+        return "CartItem{" +
                 "id=" + id +
                 ", quantity=" + quantity +
-                ", order=" + userOrder +
+                ", cart=" + cart +
                 ", product=" + product +
                 '}';
     }

@@ -13,10 +13,10 @@ public class ApiProduct {
     private String ean13;
 
     @SerializedName("price")
-    private float price;
+    private long price;
 
-    @SerializedName("productWeight")
-    private float productWeight;
+    @SerializedName("productWeightKg")
+    private double productWeightKg;
 
     @SerializedName("shortDesc")
     private String shortDesc;
@@ -33,12 +33,12 @@ public class ApiProduct {
     @SerializedName("imageUrl")
     private String imageUrl;
 
+    @SerializedName("productCategory")
+    private Category productCategory;
+
     public ApiProduct(Long id) {
         this.id = id;
     }
-
-    @SerializedName("productCategory")
-    private Category productCategory;
 
     public Long getId() {
         return id;
@@ -52,12 +52,12 @@ public class ApiProduct {
         return ean13;
     }
 
-    public float getPrice() {
+    public long getPrice() {
         return price;
     }
 
-    public float getProductWeight() {
-        return productWeight;
+    public double getProductWeightKg() {
+        return productWeightKg;
     }
 
     public String getShortDesc() {

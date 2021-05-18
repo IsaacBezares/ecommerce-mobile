@@ -1,39 +1,45 @@
 package com.bessarez.ecommercemobile.models;
 
-import java.util.HashSet;
 import java.util.Objects;
-import java.util.Set;
 
 public class Product {
     private Long id;
     private String name;
     private String ean13;
-    private float price;
-    private float productWeight;
+    private long price;
+    private double productWeightKg;
     private String shortDesc;
     private String longDesc;
     private int stock;
     private int quantity;
     private String imageUrl;
     private ProductCategory productCategory;
-//    private Set<UserViewedProduct> userViewedProducts = new HashSet<>();
 
     public Product() {
     }
 
-    public Product(Long id, String name, String ean13, float price, float productWeight, String shortDesc, String longDesc, int stock, int quantity, String imageUrl, ProductCategory productCategory) {
+    public Product(Long id,
+                   String name,
+                   String ean13,
+                   long price,
+                   double productWeightKg,
+                   String shortDesc,
+                   String longDesc,
+                   int stock,
+                   int quantity,
+                   String imageUrl,
+                   ProductCategory productCategory) {
         this.id = id;
         this.name = name;
         this.ean13 = ean13;
         this.price = price;
-        this.productWeight = productWeight;
+        this.productWeightKg = productWeightKg;
         this.shortDesc = shortDesc;
         this.longDesc = longDesc;
         this.stock = stock;
         this.quantity = quantity;
         this.imageUrl = imageUrl;
         this.productCategory = productCategory;
-//        this.userViewedProducts = userViewedProducts;
     }
 
     public Long getId() {
@@ -60,20 +66,20 @@ public class Product {
         this.ean13 = ean13;
     }
 
-    public float getPrice() {
+    public long getPrice() {
         return price;
     }
 
-    public void setPrice(float price) {
+    public void setPrice(long price) {
         this.price = price;
     }
 
-    public float getProductWeight() {
-        return productWeight;
+    public double getProductWeightKg() {
+        return productWeightKg;
     }
 
-    public void setProductWeight(float productWeight) {
-        this.productWeight = productWeight;
+    public void setProductWeightKg(double productWeightKg) {
+        this.productWeightKg = productWeightKg;
     }
 
     public String getShortDesc() {
@@ -124,14 +130,6 @@ public class Product {
         this.productCategory = productCategory;
     }
 
-    /*public Set<UserViewedProduct> getUserViewedProducts() {
-        return userViewedProducts;
-    }
-
-    public void setUserViewedProducts(Set<UserViewedProduct> userViewedProducts) {
-        this.userViewedProducts = userViewedProducts;
-    }*/
-
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
@@ -154,7 +152,7 @@ public class Product {
                 ", name='" + name + '\'' +
                 ", ean13='" + ean13 + '\'' +
                 ", price=" + price +
-                ", productWeight=" + productWeight +
+                ", productWeight=" + productWeightKg +
                 ", shortDesc='" + shortDesc + '\'' +
                 ", longDesc='" + longDesc + '\'' +
                 ", stock=" + stock +

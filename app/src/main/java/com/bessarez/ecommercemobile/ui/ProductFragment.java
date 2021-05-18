@@ -1,6 +1,7 @@
 package com.bessarez.ecommercemobile.ui;
 
 import android.content.Context;
+import android.content.Intent;
 import android.content.SharedPreferences;
 import android.net.Uri;
 import android.os.Bundle;
@@ -17,6 +18,7 @@ import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import com.bessarez.ecommercemobile.CheckoutActivity;
 import com.bessarez.ecommercemobile.R;
 import com.bessarez.ecommercemobile.models.OrderProduct;
 import com.bessarez.ecommercemobile.models.Product;
@@ -41,7 +43,6 @@ public class ProductFragment extends Fragment implements ProductOrderQuantityDia
     AppCompatButton btnQuantity, btnBuyNow, btnAddToCart, btnAddToWishList;
 
     OrderProduct orderProduct;
-
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -98,8 +99,8 @@ public class ProductFragment extends Fragment implements ProductOrderQuantityDia
         Long id = product.getId();
         String name = product.getName();
         String ean13 = product.getEan13();
-        float price = product.getPrice();
-        float productWeight = product.getProductWeight();
+        long price = product.getPrice();
+        double productWeight = product.getProductWeightKg();
         String shortDesc = product.getShortDesc();
         String longDesc = product.getLongDesc();
         int stock = product.getStock();
@@ -124,46 +125,45 @@ public class ProductFragment extends Fragment implements ProductOrderQuantityDia
         btnAddToCart = view.findViewById(R.id.btn_add_to_cart);
         btnAddToWishList = view.findViewById(R.id.btn_add_to_wish_list);
 
-        btnQuantity.setText(getString(R.string.quantity) + " 1");
-        btnQuantity.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                ProductOrderQuantityDialog dialog = new ProductOrderQuantityDialog(orderProduct.getProduct().getStock());
-                dialog.setTargetFragment(ProductFragment.this, 1);
-                dialog.show(getParentFragmentManager(), ProductOrderQuantityDialog.TAG);
-            }
+        btnBuyNow.setOnClickListener(v -> {
+            Intent intent = new Intent(getActivity(), CheckoutActivity.class);
+            startActivity(intent);
         });
 
-        btnAddToWishList.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
+        btnQuantity.setText(getString(R.string.quantity) + " 1");
+        btnQuantity.setOnClickListener(v -> {
+            ProductOrderQuantityDialog dialog = new ProductOrderQuantityDialog(orderProduct.getProduct().getStock());
+            dialog.setTargetFragment(ProductFragment.this, 1);
+            dialog.show(getParentFragmentManager(), ProductOrderQuantityDialog.TAG);
+        });
 
-                SharedPreferences preferences = view.getContext().getSharedPreferences("credentials", Context.MODE_PRIVATE);
-                Long userId = preferences.getLong("userId", 0);
+        btnAddToWishList.setOnClickListener(v -> {
 
-                ApiRegisteredUser user = new ApiRegisteredUser(userId);
-                user.setId(userId);
+            SharedPreferences preferences = view.getContext().getSharedPreferences("credentials", Context.MODE_PRIVATE);
+            Long userId = preferences.getLong("userId", 0);
 
-                ApiProduct thisProduct = new ApiProduct(orderProduct.getProduct().getId());
+            ApiRegisteredUser user = new ApiRegisteredUser(userId);
+            user.setId(userId);
 
-                Call<ApiWishProduct> call = getApiService().addProductToWishList(new ApiWishProduct(user,thisProduct));
-                call.enqueue(new Callback<ApiWishProduct>() {
-                    @Override
-                    public void onResponse(Call<ApiWishProduct> call, Response<ApiWishProduct> response) {
-                        Log.d(TAG, "onResponse: " + response.message() );
-                        if (!response.isSuccessful()) {
-                            Log.d(TAG, "Algo falló");
-                            return;
-                        }
+            ApiProduct thisProduct = new ApiProduct(orderProduct.getProduct().getId());
+
+            Call<ApiWishProduct> call = getApiService().addProductToWishList(new ApiWishProduct(user, thisProduct));
+            call.enqueue(new Callback<ApiWishProduct>() {
+                @Override
+                public void onResponse(Call<ApiWishProduct> call, Response<ApiWishProduct> response) {
+                    Log.d(TAG, "onResponse: " + response.message());
+                    if (!response.isSuccessful()) {
+                        Log.d(TAG, "Algo falló");
+                        return;
                     }
+                }
 
-                    @Override
-                    public void onFailure(Call<ApiWishProduct> call, Throwable t) {
-                        System.out.println("Algo falló");
-                        t.printStackTrace();
-                    }
-                });
-            }
+                @Override
+                public void onFailure(Call<ApiWishProduct> call, Throwable t) {
+                    System.out.println("Algo falló");
+                    t.printStackTrace();
+                }
+            });
         });
     }
 

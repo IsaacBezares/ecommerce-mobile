@@ -1,13 +1,13 @@
 package com.bessarez.ecommercemobile.models;
 
-import java.util.Date;
+import java.time.LocalDate;
 import java.util.Objects;
 
 public class UserViewedProduct {
     private Long id;
     private RegisteredUser registeredUser;
     private Product product;
-    private Date viewDate;
+    private LocalDate viewedAt;
 
     public UserViewedProduct() {
     }
@@ -36,12 +36,12 @@ public class UserViewedProduct {
         this.product = product;
     }
 
-    public Date getViewDate() {
-        return viewDate;
+    public LocalDate getViewedAt() {
+        return viewedAt;
     }
 
-    public void setViewDate(Date viewDate) {
-        this.viewDate = viewDate;
+    public void setViewedAt(LocalDate viewedAt) {
+        this.viewedAt = viewedAt;
     }
 
     @Override
@@ -63,7 +63,7 @@ public class UserViewedProduct {
                 "id=" + id +
                 ", registeredUser=" + registeredUser +
                 ", product=" + product +
-                ", viewDate=" + viewDate +
+                ", viewDate=" + viewedAt +
                 '}';
     }
 }

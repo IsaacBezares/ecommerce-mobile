@@ -59,4 +59,7 @@
     <string name="login_failed">"Login failed"</string>
     <string name="products">Products</string>
     <string name="results">Results</string>
+    <string name="ordered_at">Ordered at</string>
+    <string name="total">Total</string>
+    <string name="order_no">Order No.</string>
 </resources>

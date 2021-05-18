@@ -1,8 +1,6 @@
 package com.bessarez.ecommercemobile.models;
 
-import java.util.HashSet;
 import java.util.Objects;
-import java.util.Set;
 
 public class ProductCategory {
 

@@ -2,7 +2,7 @@ package com.bessarez.ecommercemobile.models.apimodels;
 
 import com.google.gson.annotations.SerializedName;
 
-import java.util.Date;
+import java.time.LocalDate;
 
 public class ApiRegisteredUser {
     @SerializedName("id")
@@ -38,8 +38,8 @@ public class ApiRegisteredUser {
     @SerializedName("email")
     private String email;
 
-    @SerializedName("date")
-    private Date date;
+    @SerializedName("registeredAt")
+    private LocalDate registeredAt;
 
     public ApiRegisteredUser() {
     }
@@ -48,7 +48,7 @@ public class ApiRegisteredUser {
         this.id = id;
     }
 
-    public ApiRegisteredUser(Long id, String firstName, String lastName, String password, String shipAddress, String city, String state, String zipCode, String country, String phone, String email, Date date) {
+    public ApiRegisteredUser(Long id, String firstName, String lastName, String password, String shipAddress, String city, String state, String zipCode, String country, String phone, String email, LocalDate registeredAt) {
         this.id = id;
         this.firstName = firstName;
         this.lastName = lastName;
@@ -60,7 +60,7 @@ public class ApiRegisteredUser {
         this.country = country;
         this.phone = phone;
         this.email = email;
-        this.date = date;
+        this.registeredAt = registeredAt;
     }
 
     public Long getId() {
@@ -151,11 +151,11 @@ public class ApiRegisteredUser {
         this.email = email;
     }
 
-    public Date getDate() {
-        return date;
+    public LocalDate getRegisteredAt() {
+        return registeredAt;
     }
 
-    public void setDate(Date date) {
-        this.date = date;
+    public void setRegisteredAt(LocalDate registeredAt) {
+        this.registeredAt = registeredAt;
     }
 }

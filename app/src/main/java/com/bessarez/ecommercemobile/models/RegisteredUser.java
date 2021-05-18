@@ -1,6 +1,6 @@
 package com.bessarez.ecommercemobile.models;
 
-import java.util.Date;
+import java.time.LocalDate;
 import java.util.HashSet;
 import java.util.Objects;
 import java.util.Set;
@@ -18,13 +18,26 @@ public class RegisteredUser {
     private String country;
     private String phone;
     private String email;
-    private Date date;
+    private LocalDate registeredAt;
     private Set<UserViewedProduct> userViewedProducts = new HashSet<>();
+    private Cart cart;
 
     public RegisteredUser() {
     }
 
-    public RegisteredUser(Long id, String firstName, String lastName, String password, String shipAddress, String city, String state, String zipCode, String country, String phone, String email, Date date, Set<UserViewedProduct> userViewedProducts) {
+    public RegisteredUser(Long id,
+                          String firstName,
+                          String lastName,
+                          String password,
+                          String shipAddress,
+                          String city,
+                          String state,
+                          String zipCode,
+                          String country,
+                          String phone,
+                          String email,
+                          LocalDate registeredAt,
+                          Set<UserViewedProduct> userViewedProducts) {
         this.id = id;
         this.firstName = firstName;
         this.lastName = lastName;
@@ -36,7 +49,7 @@ public class RegisteredUser {
         this.country = country;
         this.phone = phone;
         this.email = email;
-        this.date = date;
+        this.registeredAt = registeredAt;
         this.userViewedProducts = userViewedProducts;
     }
 
@@ -128,12 +141,12 @@ public class RegisteredUser {
         this.email = email;
     }
 
-    public Date getDate() {
-        return date;
+    public LocalDate getRegisteredAt() {
+        return registeredAt;
     }
 
-    public void setDate(Date date) {
-        this.date = date;
+    public void setRegisteredAt(LocalDate registeredAt) {
+        this.registeredAt = registeredAt;
     }
 
     public Set<UserViewedProduct> getUserViewedProducts() {
@@ -144,18 +157,25 @@ public class RegisteredUser {
         this.userViewedProducts = userViewedProducts;
     }
 
+    public Cart getCart() {
+        return cart;
+    }
+
+    public void setCart(Cart cart) {
+        this.cart = cart;
+    }
+
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
-        if (!(o instanceof RegisteredUser)) return false;
-        RegisteredUser registeredUser = (RegisteredUser) o;
-        return id.equals(registeredUser.id) &&
-                date.equals(registeredUser.date);
+        if (o == null || getClass() != o.getClass()) return false;
+        RegisteredUser that = (RegisteredUser) o;
+        return id.equals(that.id);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(id, date);
+        return Objects.hash(id);
     }
 
     @Override
@@ -172,7 +192,7 @@ public class RegisteredUser {
                 ", country='" + country + '\'' +
                 ", phone='" + phone + '\'' +
                 ", email='" + email + '\'' +
-                ", date=" + date +
+                ", date=" + registeredAt +
                 ", userViewedProducts=" + userViewedProducts +
                 '}';
     }

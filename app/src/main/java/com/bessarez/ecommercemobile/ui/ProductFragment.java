@@ -169,7 +169,7 @@ public class ProductFragment extends Fragment implements ProductOrderQuantityDia
 
     private void updateViewsData(Product product) {
         tvProductTitle.setText(product.getName());
-        tvProductPrice.setText("$" + product.getPrice());
+        tvProductPrice.setText("$" + product.getPrice()/100.0);
         tvProductDescription.setText(product.getLongDesc());
         String availableStock = getString(R.string.available_stock);
         tvProductStock.setText(availableStock + " " + product.getStock());

@@ -1,4 +1,4 @@
-package com.bessarez.ecommercemobile.ui.adapters;
+package com.bessarez.ecommercemobile.ui.models;
 
 public abstract class ListOrderItem {
     public static final int TYPE_ORDER = 0;

@@ -25,6 +25,10 @@ public class RegisteredUser {
     public RegisteredUser() {
     }
 
+    public RegisteredUser(Long id) {
+        this.id = id;
+    }
+
     public RegisteredUser(Long id,
                           String firstName,
                           String lastName,

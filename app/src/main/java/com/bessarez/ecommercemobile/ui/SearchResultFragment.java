@@ -59,7 +59,12 @@ public class SearchResultFragment extends Fragment implements OnProductListener 
                 ApiProducts apiProducts = response.body();
 
                 for (com.bessarez.ecommercemobile.models.Product product : apiProducts.getEmbeddedServices()) {
-                    resultProducts.add(new CardProduct(product.getId(), product.getImageUrl(), product.getName(), String.valueOf(product.getPrice())));
+                    resultProducts.add(new CardProduct(
+                            product.getId(),
+                            product.getImageUrl(),
+                            product.getName(),
+                            String.valueOf(product.getPrice() / 100.0)
+                    ));
                 }
 
                 cardProductAdapter.notifyDataSetChanged();

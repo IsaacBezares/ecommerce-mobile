@@ -101,7 +101,12 @@ public class HomeFragment extends Fragment implements OnProductListener {
                 ApiProducts apiProducts = response.body();
 
                 for (com.bessarez.ecommercemobile.models.Product product : apiProducts.getEmbeddedServices()) {
-                    products.add(new CardProduct(product.getId(), product.getImageUrl(), product.getName(), String.valueOf(product.getPrice())));
+                    products.add(new CardProduct(
+                            product.getId(),
+                            product.getImageUrl(),
+                            product.getName(),
+                            String.valueOf(product.getPrice() / 100.0)
+                    ));
                     cardProductAdapter.notifyDataSetChanged();
                 }
             }

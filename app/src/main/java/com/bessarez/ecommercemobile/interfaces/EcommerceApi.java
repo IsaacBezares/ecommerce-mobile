@@ -1,5 +1,6 @@
 package com.bessarez.ecommercemobile.interfaces;
 
+import com.bessarez.ecommercemobile.models.RecentSearch;
 import com.bessarez.ecommercemobile.models.RegisteredUser;
 import com.bessarez.ecommercemobile.models.apimodels.ApiLogin;
 import com.bessarez.ecommercemobile.models.apimodels.ApiProductsSearch;
@@ -52,9 +53,6 @@ public interface EcommerceApi {
             @Path("email") String email,
             @Header("Authorization") String token);
 
-    @GET("/user_viewed_products")
-    Call<ApiUserViewedProducts> getUserViewedProducts();
-
     @POST("/login")
     Call<ApiToken> login(@Body ApiLogin apiLogin);
 
@@ -67,8 +65,11 @@ public interface EcommerceApi {
     @GET("/suggested_products/{query}")
     Call<ApiSuggestedProducts> getSuggestedProducts(@Path("query") String query);
 
-    @GET("/recent_searches/{userId}")
+    @GET("/recent_searches/user/{userId}")
     Call<ApiRecentSearches> getRecentSearches(@Path("userId") Long userId);
+
+    @POST("recent_searches")
+    Call<RecentSearch> postRecentSearch(@Body RecentSearch recentSearch);
 
     @GET("/products/search/{query}")
     Call<ApiProducts> getSearchResults(@Path("query") String query);

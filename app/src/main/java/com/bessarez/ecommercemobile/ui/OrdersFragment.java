@@ -20,7 +20,7 @@ import com.bessarez.ecommercemobile.interfaces.OnProductListener;
 import com.bessarez.ecommercemobile.models.OrderProduct;
 import com.bessarez.ecommercemobile.models.UserOrder;
 import com.bessarez.ecommercemobile.models.apimodels.ApiUserOrders;
-import com.bessarez.ecommercemobile.ui.adapters.ListOrderItem;
+import com.bessarez.ecommercemobile.ui.models.ListOrderItem;
 import com.bessarez.ecommercemobile.ui.adapters.OrderAdapter;
 import com.bessarez.ecommercemobile.ui.models.CardOrder;
 import com.bessarez.ecommercemobile.ui.models.CardOrderItem;

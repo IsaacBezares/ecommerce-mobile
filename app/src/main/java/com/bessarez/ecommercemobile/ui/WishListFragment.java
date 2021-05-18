@@ -66,14 +66,17 @@ public class WishListFragment extends Fragment implements OnProductListener {
                 }
 
                 ApiWishProducts apiProducts = response.body();
-                try {
-                    for (ApiWishProduct apiWishProducts : apiProducts.getEmbeddedServices()) {
-                        ApiProduct product = apiWishProducts.getProduct();
-                        products.add(new CardProduct(product.getId(),product.getImageUrl(), product.getName(), String.valueOf(product.getPrice())));
-                        cardProductAdapter.notifyDataSetChanged();
-                    }
-                } catch (Exception e) {
-                    Log.e(TAG, "onResponse: No products on Whish list");
+
+                if (apiProducts.getEmbedded() == null) return;
+
+                for (ApiProduct product : apiProducts.getEmbeddedServices()) {
+                    products.add(new CardProduct(
+                            product.getId(),
+                            product.getImageUrl(),
+                            product.getName(),
+                            String.valueOf(product.getPrice() / 100.0)
+                    ));
+                    cardProductAdapter.notifyDataSetChanged();
                 }
             }
 
@@ -83,7 +86,7 @@ public class WishListFragment extends Fragment implements OnProductListener {
             }
         });
 
-        cardProductAdapter = new CardProductAdapter(products, getContext(),this::onProductClick);
+        cardProductAdapter = new CardProductAdapter(products, getContext(), this::onProductClick);
         recyclerView.setAdapter(cardProductAdapter);
     }
 

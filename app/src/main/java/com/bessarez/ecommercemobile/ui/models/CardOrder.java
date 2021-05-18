@@ -1,7 +1,5 @@
 package com.bessarez.ecommercemobile.ui.models;
 
-import com.bessarez.ecommercemobile.ui.adapters.ListOrderItem;
-
 import java.time.LocalDate;
 
 public class CardOrder extends ListOrderItem {

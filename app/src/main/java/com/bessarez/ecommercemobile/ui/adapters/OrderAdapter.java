@@ -14,15 +14,15 @@ import com.bessarez.ecommercemobile.R;
 import com.bessarez.ecommercemobile.interfaces.OnProductListener;
 import com.bessarez.ecommercemobile.ui.models.CardOrder;
 import com.bessarez.ecommercemobile.ui.models.CardOrderItem;
+import com.bessarez.ecommercemobile.ui.models.ListOrderItem;
 import com.squareup.picasso.Picasso;
 
-import java.util.ArrayList;
 import java.util.List;
 
 public class OrderAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
 
     private Context mContext;
-    List<ListOrderItem> consolidatedList = new ArrayList<>();
+    List<ListOrderItem> consolidatedList;
 
     private OnProductListener mOnProductListener;
 

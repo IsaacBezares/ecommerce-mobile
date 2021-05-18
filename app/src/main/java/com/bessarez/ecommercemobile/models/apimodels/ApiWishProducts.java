@@ -10,16 +10,20 @@ public class ApiWishProducts {
     @SerializedName("_embedded")
     private ApiWishProducts.Service embedded;
 
-    public List<ApiWishProduct> getEmbeddedServices() {
+    public Service getEmbedded() {
+        return embedded;
+    }
+
+    public List<ApiProduct> getEmbeddedServices() {
         return embedded.getWishProducts();
     }
 
     private class Service {
 
-        @SerializedName("wishProducts")
-        private ArrayList<ApiWishProduct> wishProductList = new ArrayList<>();
+        @SerializedName("products")
+        private List<ApiProduct> wishProductList = new ArrayList<>();
 
-        public List<ApiWishProduct> getWishProducts() {
+        public List<ApiProduct> getWishProducts() {
             return wishProductList;
         }
 

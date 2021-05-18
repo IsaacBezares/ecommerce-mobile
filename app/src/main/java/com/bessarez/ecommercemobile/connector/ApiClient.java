@@ -1,7 +1,5 @@
 package com.bessarez.ecommercemobile.connector;
 
-import android.util.Log;
-
 import com.bessarez.ecommercemobile.interfaces.EcommerceApi;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
@@ -11,15 +9,11 @@ import com.google.gson.JsonElement;
 import com.google.gson.JsonParseException;
 
 import java.lang.reflect.Type;
-import java.time.Instant;
 import java.time.LocalDate;
-import java.time.ZoneId;
 import java.time.format.DateTimeFormatter;
 
 import retrofit2.Retrofit;
 import retrofit2.converter.gson.GsonConverterFactory;
-
-import static android.content.ContentValues.TAG;
 
 public class ApiClient {
 

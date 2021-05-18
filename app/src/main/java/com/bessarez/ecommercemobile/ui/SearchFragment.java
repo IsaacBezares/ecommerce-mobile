@@ -22,6 +22,8 @@ import android.view.ViewGroup;
 
 import com.bessarez.ecommercemobile.R;
 import com.bessarez.ecommercemobile.interfaces.OnSearchSuggestionListener;
+import com.bessarez.ecommercemobile.models.RecentSearch;
+import com.bessarez.ecommercemobile.models.RegisteredUser;
 import com.bessarez.ecommercemobile.models.apimodels.ApiRecentSearch;
 import com.bessarez.ecommercemobile.models.apimodels.ApiSuggestedProduct;
 import com.bessarez.ecommercemobile.models.apimodels.ApiSuggestedProducts;
@@ -73,8 +75,7 @@ public class SearchFragment extends Fragment implements OnSearchSuggestionListen
         recyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
         recyclerView.setAdapter(searchSuggestionAdapter);
 
-        SharedPreferences sharedPreferences = getContext().getSharedPreferences("credentials", Context.MODE_PRIVATE);
-        Long userId = sharedPreferences.getLong("userId", 0);
+        Long userId = getUserIdPreferences();
         getRecentSearches(userId);
         return view;
     }
@@ -111,6 +112,9 @@ public class SearchFragment extends Fragment implements OnSearchSuggestionListen
                             public boolean onQueryTextSubmit(String query) {
                                 SearchFragmentDirections.ActionNavSearchToSearchableFragment action = SearchFragmentDirections.actionNavSearchToSearchableFragment(query);
                                 Navigation.findNavController(getView()).navigate(action);
+
+                                Long userId = getUserIdPreferences();
+                                postRecentSearch(userId,query);
                                 return false;
                             }
 
@@ -214,6 +218,27 @@ public class SearchFragment extends Fragment implements OnSearchSuggestionListen
         });
     }
 
+    private void postRecentSearch(Long userId, String query){
+        RecentSearch recentSearch = new RecentSearch();
+        recentSearch.setSearch(query);
+        recentSearch.setRegisteredUser(new RegisteredUser(userId));
+
+        Call<RecentSearch> call = getApiService().postRecentSearch(recentSearch);
+        call.enqueue(new Callback<RecentSearch>() {
+            @Override
+            public void onResponse(Call<RecentSearch> call, Response<RecentSearch> response) {
+                if (!response.isSuccessful()) {
+                    Log.d(TAG, "onResponse: Algo pasó");
+                    return;
+                }
+            }
+            @Override
+            public void onFailure(Call<RecentSearch> call, Throwable t) {
+                Log.d(TAG, "onFailure: Algo pasó");
+            }
+        });
+    }
+
     @Override
     public void onSuggestionClick(View v, int position) {
         if (v.getId() == R.id.ib_replace_text) {
@@ -232,5 +257,10 @@ public class SearchFragment extends Fragment implements OnSearchSuggestionListen
                 Navigation.findNavController(getView()).navigate(action);
             }
         }
+    }
+
+    private Long getUserIdPreferences(){
+        SharedPreferences sharedPreferences = getContext().getSharedPreferences("credentials", Context.MODE_PRIVATE);
+        return sharedPreferences.getLong("userId", 0);
     }
 }

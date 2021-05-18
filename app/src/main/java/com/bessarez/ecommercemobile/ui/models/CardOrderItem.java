@@ -1,7 +1,5 @@
 package com.bessarez.ecommercemobile.ui.models;
 
-import com.bessarez.ecommercemobile.ui.adapters.ListOrderItem;
-
 public class CardOrderItem extends ListOrderItem {
 
     private long id;

@@ -15,6 +15,11 @@ public class OrderProduct {
     public OrderProduct() {
     }
 
+    public OrderProduct(int quantity, Product product) {
+        this.quantity = quantity;
+        this.product = product;
+    }
+
     public OrderProduct(Long id, int quantity, UserOrder userOrder, Product product) {
         this.id = id;
         this.quantity = quantity;

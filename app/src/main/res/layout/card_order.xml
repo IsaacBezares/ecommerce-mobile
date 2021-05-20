@@ -58,8 +58,21 @@
         android:fontFamily="@font/regular"
         android:text="@string/total"
         android:textColor="@color/blue_gray"
+        app:layout_constraintBottom_toBottomOf="@+id/money_sign"
+        app:layout_constraintEnd_toStartOf="@+id/money_sign"
+        app:layout_constraintTop_toTopOf="@id/money_sign" />
+
+    <TextView
+        android:id="@+id/money_sign"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:fontFamily="@font/regular"
+        android:text="@string/money_sign"
+        android:textColor="@color/blue_gray"
+        app:layout_constraintBottom_toBottomOf="@+id/tv_total_amount"
         app:layout_constraintEnd_toStartOf="@+id/tv_total_amount"
         app:layout_constraintTop_toTopOf="parent" />
+
 
     <TextView
         android:id="@+id/tv_total_amount"

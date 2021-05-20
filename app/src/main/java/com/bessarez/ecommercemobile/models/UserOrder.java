@@ -1,9 +1,8 @@
 package com.bessarez.ecommercemobile.models;
 
 import java.time.LocalDate;
-import java.util.HashSet;
 import java.util.Objects;
-import java.util.Set;
+import java.util.List;
 
 public class UserOrder {
 
@@ -11,16 +10,24 @@ public class UserOrder {
 
     private LocalDate orderedAt;
 
-    private Set<OrderProduct> orderProducts = new HashSet<>();
+    private List<OrderProduct> orderProducts;
+
+    private RegisteredUser registeredUser;
 
 
     public UserOrder() {
     }
 
-    public UserOrder(Long id, LocalDate orderedAt, Set<OrderProduct> orderProducts) {
+    public UserOrder(List<OrderProduct> orderProducts, RegisteredUser registeredUser) {
+        this.orderProducts = orderProducts;
+        this.registeredUser = registeredUser;
+    }
+
+    public UserOrder(Long id, LocalDate orderedAt, List<OrderProduct> orderProducts, RegisteredUser registeredUser) {
         this.id = id;
         this.orderedAt = orderedAt;
         this.orderProducts = orderProducts;
+        this.registeredUser = registeredUser;
     }
 
     public Long getId() {
@@ -39,12 +46,20 @@ public class UserOrder {
         this.orderedAt = date;
     }
 
-    public Set<OrderProduct> getOrderProducts() {
+    public List<OrderProduct> getOrderProducts() {
         return orderProducts;
     }
 
-    public void setOrderProducts(Set<OrderProduct> orderProducts) {
+    public void setOrderProducts(List<OrderProduct> orderProducts) {
         this.orderProducts = orderProducts;
+    }
+
+    public RegisteredUser getRegisteredUser() {
+        return registeredUser;
+    }
+
+    public void setRegisteredUser(RegisteredUser registeredUser) {
+        this.registeredUser = registeredUser;
     }
 
     @Override
@@ -64,8 +79,9 @@ public class UserOrder {
     public String toString() {
         return "UserOrder{" +
                 "id=" + id +
-                ", date=" + orderedAt +
+                ", orderedAt=" + orderedAt +
                 ", orderProducts=" + orderProducts +
+                ", registeredUser=" + registeredUser +
                 '}';
     }
 }

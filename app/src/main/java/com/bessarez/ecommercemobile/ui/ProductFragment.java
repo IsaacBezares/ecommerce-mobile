@@ -64,17 +64,16 @@ public class ProductFragment extends Fragment implements ProductOrderQuantityDia
             return;
         }
 
-        Call<ApiProduct> call = getApiService().getProduct(productId);
-        call.enqueue(new Callback<ApiProduct>() {
+        Call<Product> call = getApiService().getProduct(productId);
+        call.enqueue(new Callback<Product>() {
             @Override
-            public void onResponse(Call<ApiProduct> call, Response<ApiProduct> response) {
+            public void onResponse(Call<Product> call, Response<Product> response) {
                 if (!response.isSuccessful()) {
                     Log.d(TAG, "Algo falló");
                     return;
                 }
 
-                ApiProduct responseProduct = response.body();
-                Product product = makeProduct(responseProduct);
+                Product product = response.body();
                 orderProduct.setProduct(product);
                 orderProduct.setQuantity(1);
                 updateViewsData(product);
@@ -82,7 +81,7 @@ public class ProductFragment extends Fragment implements ProductOrderQuantityDia
             }
 
             @Override
-            public void onFailure(Call<ApiProduct> call, Throwable t) {
+            public void onFailure(Call<Product> call, Throwable t) {
             }
         });
     }
@@ -94,24 +93,6 @@ public class ProductFragment extends Fragment implements ProductOrderQuantityDia
     }
 
     //Methods for readability
-
-    private Product makeProduct(ApiProduct product) {
-        Long id = product.getId();
-        String name = product.getName();
-        String ean13 = product.getEan13();
-        long price = product.getPrice();
-        double productWeight = product.getProductWeightKg();
-        String shortDesc = product.getShortDesc();
-        String longDesc = product.getLongDesc();
-        int stock = product.getStock();
-        int quantity = product.getQuantity();
-        String imageUrl = product.getImageUrl();
-        ProductCategory productCategory = new ProductCategory(
-                product.getProductCategory().getId(),
-                product.getProductCategory().getCategory());
-
-        return new Product(id, name, ean13, price, productWeight, shortDesc, longDesc, stock, quantity, imageUrl, productCategory);
-    }
 
     private void bindViews(View view) {
 
@@ -127,6 +108,8 @@ public class ProductFragment extends Fragment implements ProductOrderQuantityDia
 
         btnBuyNow.setOnClickListener(v -> {
             Intent intent = new Intent(getActivity(), CheckoutActivity.class);
+            intent.putExtra("productId", orderProduct.getProduct().getId());
+            intent.putExtra("quantity", orderProduct.getQuantity());
             startActivity(intent);
         });
 

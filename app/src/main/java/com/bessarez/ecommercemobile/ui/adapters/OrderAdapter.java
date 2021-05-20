@@ -17,6 +17,7 @@ import com.bessarez.ecommercemobile.ui.models.CardOrderItem;
 import com.bessarez.ecommercemobile.ui.models.ListOrderItem;
 import com.squareup.picasso.Picasso;
 
+import java.text.DecimalFormat;
 import java.util.List;
 
 public class OrderAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {

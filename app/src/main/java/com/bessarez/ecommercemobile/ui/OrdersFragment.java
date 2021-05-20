@@ -25,6 +25,7 @@ import com.bessarez.ecommercemobile.ui.adapters.OrderAdapter;
 import com.bessarez.ecommercemobile.ui.models.CardOrder;
 import com.bessarez.ecommercemobile.ui.models.CardOrderItem;
 
+import java.text.DecimalFormat;
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
@@ -38,9 +39,8 @@ import static com.bessarez.ecommercemobile.connector.ApiClient.getApiService;
 
 public class OrdersFragment extends Fragment implements OnProductListener {
 
-    List<ListOrderItem> consolidatedList = new ArrayList<>();
+    private List<ListOrderItem> consolidatedList = new ArrayList<>();
 
-    private RecyclerView rv_orders;
     private OrderAdapter orderAdapter;
 
     @Override
@@ -61,8 +61,7 @@ public class OrdersFragment extends Fragment implements OnProductListener {
     }
 
     private void loadRecycler(View view) {
-        rv_orders = view.findViewById(R.id.rv_orders);
-        rv_orders.setHasFixedSize(true);
+        RecyclerView rv_orders = view.findViewById(R.id.rv_orders);
         rv_orders.setNestedScrollingEnabled(false);
         LinearLayoutManager layoutManager = new LinearLayoutManager(getContext());
         layoutManager.setOrientation(LinearLayoutManager.VERTICAL);

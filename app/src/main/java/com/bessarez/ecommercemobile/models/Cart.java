@@ -1,20 +1,20 @@
 package com.bessarez.ecommercemobile.models;
 
 import java.time.LocalDate;
+import java.util.List;
 import java.util.Objects;
-import java.util.Set;
 
 public class Cart {
 
     private Long id;
     private LocalDate updatedAt;
     private RegisteredUser registeredUser;
-    private Set<CartItem> cartItems;
+    private List<CartItem> cartItems;
 
     public Cart() {
     }
 
-    public Cart(Long id, LocalDate updatedAt, RegisteredUser registeredUser, Set<CartItem> cartItems) {
+    public Cart(Long id, LocalDate updatedAt, RegisteredUser registeredUser, List<CartItem> cartItems) {
         this.id = id;
         this.updatedAt = updatedAt;
         this.registeredUser = registeredUser;
@@ -45,11 +45,11 @@ public class Cart {
         this.registeredUser = registeredUser;
     }
 
-    public Set<CartItem> getCartItems() {
+    public List<CartItem> getCartItems() {
         return cartItems;
     }
 
-    public void setCartItems(Set<CartItem> cartItems) {
+    public void setCartItems(List<CartItem> cartItems) {
         this.cartItems = cartItems;
     }
 

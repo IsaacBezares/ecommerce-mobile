@@ -1,7 +1,6 @@
 package com.bessarez.ecommercemobile.ui.adapters;
 
 import android.content.Context;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -12,30 +11,22 @@ import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.bessarez.ecommercemobile.R;
-import com.bessarez.ecommercemobile.interfaces.OnProductListener;
-import com.bessarez.ecommercemobile.interfaces.OnSearchSuggestionListener;
+import com.bessarez.ecommercemobile.interfaces.OnItemClickListener;
 import com.bessarez.ecommercemobile.ui.models.SearchSuggestion;
 
 import java.util.List;
-
-import static com.bessarez.ecommercemobile.ui.dialogs.ProductOrderQuantityDialog.TAG;
 
 public class SearchSuggestionAdapter extends RecyclerView.Adapter<SearchSuggestionAdapter.ViewHolder> {
 
     private List<SearchSuggestion> mList;
     private LayoutInflater mInflater;
-    private Context mContext;
 
-    private static int TYPE_RECENT_SEARCH = 1;
-    private static int TYPE_SEARCH_SUGGESTION = 2;
+    private OnItemClickListener mOnItemClickListener;
 
-    private OnSearchSuggestionListener mOnSearchSuggestionListener;
-
-    public SearchSuggestionAdapter(List<SearchSuggestion> mList, Context mContext, OnSearchSuggestionListener mOnSearchSuggestionListener) {
+    public SearchSuggestionAdapter(List<SearchSuggestion> mList, Context mContext, OnItemClickListener mOnItemClickListener) {
         this.mList = mList;
         this.mInflater = LayoutInflater.from(mContext);
-        this.mContext = mContext;
-        this.mOnSearchSuggestionListener = mOnSearchSuggestionListener;
+        this.mOnItemClickListener = mOnItemClickListener;
     }
 
     @NonNull
@@ -43,7 +34,7 @@ public class SearchSuggestionAdapter extends RecyclerView.Adapter<SearchSuggesti
     public ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
         View v = mInflater.inflate(R.layout.card_recommended_search, parent, false);
 
-        return new ViewHolder(v,mOnSearchSuggestionListener);
+        return new ViewHolder(v,mOnItemClickListener);
     }
 
     @Override
@@ -64,13 +55,13 @@ public class SearchSuggestionAdapter extends RecyclerView.Adapter<SearchSuggesti
 
     public class ViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener {
 
-        TextView name;
-        ImageButton ib_replace_text;
-        OnSearchSuggestionListener onSearchSuggestionListener;
+        protected TextView name;
+        protected ImageButton ib_replace_text;
+        protected OnItemClickListener onItemClickListener;
 
-        public ViewHolder(@NonNull View itemView, OnSearchSuggestionListener onSearchSuggestionListener) {
+        public ViewHolder(@NonNull View itemView, OnItemClickListener onitemClickListener) {
             super(itemView);
-            this.onSearchSuggestionListener = onSearchSuggestionListener;
+            this.onItemClickListener = onitemClickListener;
             name = itemView.findViewById(R.id.tv_recommended_search);
 
             ib_replace_text = itemView.findViewById(R.id.ib_replace_text);
@@ -81,7 +72,7 @@ public class SearchSuggestionAdapter extends RecyclerView.Adapter<SearchSuggesti
 
         @Override
         public void onClick(View v) {
-            onSearchSuggestionListener.onSuggestionClick(v,getAdapterPosition());
+            onItemClickListener.onItemClick(v,getAdapterPosition());
         }
     }
 }

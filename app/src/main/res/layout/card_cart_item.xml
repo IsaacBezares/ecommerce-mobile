@@ -1,0 +1,95 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content">
+
+    <View
+        android:id="@+id/divider"
+        android:layout_width="match_parent"
+        android:layout_height="1dp"
+        android:layout_marginTop="10dp"
+        android:background="@color/gray_light"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <ImageView
+        android:id="@+id/iv_product"
+        android:layout_width="100dp"
+        android:layout_height="100dp"
+        android:layout_marginTop="10dp"
+        android:layout_marginEnd="15dp"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="@id/divider" />
+
+    <TextView
+        android:id="@+id/tv_product_title"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        android:layout_marginStart="15dp"
+        android:fontFamily="@font/regular"
+        android:textColor="@color/blue_gray"
+        android:layout_marginBottom="5dp"
+        android:textSize="15sp"
+        app:layout_constraintBottom_toTopOf="@+id/btn_quantity"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.0"
+        app:layout_constraintLeft_toRightOf="@id/iv_product"
+        app:layout_constraintStart_toEndOf="@+id/iv_product"
+        app:layout_constraintTop_toTopOf="@id/iv_product" />
+
+    <TextView
+        android:id="@+id/textView"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:fontFamily="@font/semibold"
+        android:text="@string/money_sign"
+        android:textColor="@color/blue_gray"
+        android:textSize="20sp"
+        app:layout_constraintBottom_toBottomOf="@id/tv_product_price"
+        app:layout_constraintRight_toLeftOf="@id/tv_product_price"
+        app:layout_constraintTop_toTopOf="@id/tv_product_price"
+        tools:layout_editor_absoluteX="382dp"
+        tools:layout_editor_absoluteY="90dp" />
+
+    <TextView
+        android:id="@+id/tv_product_price"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:fontFamily="@font/semibold"
+        android:textColor="@color/blue_gray"
+        android:textSize="20sp"
+        app:layout_constraintBottom_toBottomOf="@id/iv_product"
+        app:layout_constraintEnd_toEndOf="parent" />
+
+    <androidx.appcompat.widget.AppCompatButton
+        android:id="@+id/btn_quantity"
+        android:layout_width="60sp"
+        android:layout_height="30dp"
+        android:background="@drawable/quantity_selector_button"
+        android:drawableEnd="@drawable/ic_keyboard_arrow_down"
+        android:drawableTint="@color/blue_gray"
+        android:fontFamily="@font/light"
+        android:textAllCaps="false"
+        android:textColor="@color/secondary"
+        android:textSize="18sp"
+        app:layout_constraintBottom_toBottomOf="@+id/iv_product"
+        app:layout_constraintStart_toStartOf="@+id/tv_product_title"
+        tools:targetApi="m" />
+
+    <TextView
+        android:id="@+id/tv_delete_item"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginEnd="15dp"
+        android:fontFamily="@font/light"
+        android:paddingStart="5dp"
+        android:paddingTop="5dp"
+        android:paddingEnd="5dp"
+        android:text="@string/delete"
+        android:textAlignment="center"
+        android:textColor="@color/secondary_dark_lighter"
+        android:textSize="15sp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toStartOf="@+id/textView" />
+</androidx.constraintlayout.widget.ConstraintLayout>

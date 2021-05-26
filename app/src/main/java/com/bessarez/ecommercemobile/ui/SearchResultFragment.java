@@ -14,8 +14,7 @@ import android.view.View;
 import android.view.ViewGroup;
 
 import com.bessarez.ecommercemobile.R;
-import com.bessarez.ecommercemobile.interfaces.OnProductListener;
-import com.bessarez.ecommercemobile.models.Product;
+import com.bessarez.ecommercemobile.interfaces.OnItemClickListener;
 import com.bessarez.ecommercemobile.models.apimodels.ApiProducts;
 import com.bessarez.ecommercemobile.ui.adapters.CardProductAdapter;
 import com.bessarez.ecommercemobile.ui.models.CardProduct;
@@ -29,7 +28,7 @@ import retrofit2.Response;
 import static android.content.ContentValues.TAG;
 import static com.bessarez.ecommercemobile.connector.ApiClient.getApiService;
 
-public class SearchResultFragment extends Fragment implements OnProductListener {
+public class SearchResultFragment extends Fragment implements OnItemClickListener {
 
     ArrayList<CardProduct> resultProducts;
     CardProductAdapter cardProductAdapter;
@@ -99,7 +98,7 @@ public class SearchResultFragment extends Fragment implements OnProductListener 
     }
 
     @Override
-    public void onProductClick(int position) {
+    public void onItemClick(View view, int position) {
         Long productId = resultProducts.get(position).getId();
         SearchResultFragmentDirections.ActionNavSearchResultToNavProduct action = SearchResultFragmentDirections.actionNavSearchResultToNavProduct(productId);
         Navigation.findNavController(getView()).navigate(action);

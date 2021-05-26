@@ -1,7 +1,7 @@
 package com.bessarez.ecommercemobile.ui.models;
 
 public class CardCheckoutItem {
-    Long id;
+    Long productId;
     int quantity;
     String name;
     String currency;
@@ -10,20 +10,20 @@ public class CardCheckoutItem {
     public CardCheckoutItem() {
     }
 
-    public CardCheckoutItem(Long id, int quantity, String name, String currency, Long price) {
-        this.id = id;
+    public CardCheckoutItem(Long productId, int quantity, String name, String currency, Long price) {
+        this.productId = productId;
         this.quantity = quantity;
         this.name = name;
         this.currency = currency;
         this.price = price;
     }
 
-    public Long getId() {
-        return id;
+    public Long getProductId() {
+        return productId;
     }
 
-    public void setId(Long id) {
-        this.id = id;
+    public void setProductId(Long productId) {
+        this.productId = productId;
     }
 
     public int getQuantity() {

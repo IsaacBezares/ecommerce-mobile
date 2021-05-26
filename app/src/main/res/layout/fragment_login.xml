@@ -10,11 +10,97 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:scaleType="centerCrop"
-        android:src="@drawable/fondo"></ImageView>
+        android:src="@drawable/fondo" />
 
     <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent">
+
+        <TextView
+            android:id="@+id/welcome"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:fontFamily="@font/bold"
+            android:text="@string/login"
+            android:textColor="@color/black"
+            android:textSize="35sp"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintHorizontal_bias="0.23"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintVertical_bias="0.117" />
+
+        <TextView
+            android:id="@+id/complete_registration"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:fontFamily="@font/regular"
+            android:text="@string/write_down_your_credentials"
+            android:textColor="@color/black"
+            android:textSize="15sp"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintHorizontal_bias="0.0"
+            app:layout_constraintStart_toStartOf="@+id/welcome"
+            app:layout_constraintTop_toBottomOf="@+id/welcome"
+            app:layout_constraintVertical_bias="0.032" />
+
+        <EditText
+            android:id="@+id/etEmailLogin"
+            android:layout_width="308dp"
+            android:layout_height="41dp"
+            android:layout_marginTop="100dp"
+            android:background="@drawable/input_field_form"
+            android:backgroundTint="@color/gray_extralight"
+            android:drawableStart="@drawable/ic_perm_identity"
+            android:drawablePadding="5dp"
+            android:ems="10"
+            android:fontFamily="@font/regular"
+            android:hint="@string/e_mail"
+            android:inputType="textEmailAddress"
+            android:textColorHint="@color/gray_dark"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintHorizontal_bias="0.495"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/complete_registration" />
+
+        <EditText
+            android:id="@+id/etPasswordLogin"
+            android:layout_width="308dp"
+            android:layout_height="41dp"
+            android:layout_marginTop="20dp"
+            android:background="@drawable/input_field_form"
+            android:backgroundTint="@color/gray_extralight"
+            android:drawableStart="@drawable/ic_vpn_key"
+            android:drawablePadding="5dp"
+            android:ems="10"
+            android:fontFamily="@font/regular"
+            android:hint="@string/password"
+            android:inputType="textPassword"
+            android:textColorHint="@color/gray_dark"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintHorizontal_bias="0.495"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/etEmailLogin"
+            app:layout_constraintVertical_bias="0.031" />
+
+        <androidx.appcompat.widget.AppCompatButton
+            android:id="@+id/btnLogin"
+            android:layout_width="308dp"
+            android:layout_height="40dp"
+            android:layout_marginTop="80dp"
+            android:background="@drawable/black_button"
+            android:fontFamily="@font/semibold"
+            android:text="@string/login"
+            android:textAlignment="center"
+            android:textAllCaps="false"
+            android:textColor="@color/gray_extralight"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintHorizontal_bias="0.495"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/etPasswordLogin" />
 
         <TextView
             android:id="@+id/tvCreateAccount"
@@ -22,6 +108,7 @@
             android:layout_height="wrap_content"
             android:layout_marginTop="20dp"
             android:fontFamily="@font/semibold"
+            android:padding="10dp"
             android:text="@string/create_one"
             android:textColor="@color/secondary"
             android:textSize="15sp"
@@ -43,89 +130,5 @@
             app:layout_constraintHorizontal_bias="0.497"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/btnLogin" />
-
-        <TextView
-            android:id="@+id/tvTitleLogin"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:fontFamily="@font/bold"
-            android:text="@string/login"
-            android:textColor="@color/black"
-            android:textSize="35sp"
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintHorizontal_bias="0.23"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent"
-            app:layout_constraintVertical_bias="0.117" />
-
-        <TextView
-            android:id="@+id/tvWriteYourCredentials"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:fontFamily="@font/regular"
-            android:text="@string/write_down_your_credentials"
-            android:textColor="@color/black"
-            android:textSize="15sp"
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintHorizontal_bias="0.0"
-            app:layout_constraintStart_toStartOf="@+id/tvTitleLogin"
-            app:layout_constraintTop_toBottomOf="@+id/tvTitleLogin"
-            app:layout_constraintVertical_bias="0.032" />
-
-        <androidx.appcompat.widget.AppCompatButton
-            android:id="@+id/btnLogin"
-            android:layout_width="308dp"
-            android:layout_height="40dp"
-            android:layout_marginTop="80dp"
-            android:background="@drawable/black_button"
-            android:fontFamily="@font/semibold"
-            android:text="@string/login"
-            android:textAlignment="center"
-            android:textAllCaps="false"
-            android:textColor="@color/gray_extralight"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintHorizontal_bias="0.495"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/etPasswordLogin" />
-
-        <EditText
-            android:id="@+id/etEmailLogin"
-            android:layout_width="308dp"
-            android:layout_height="41dp"
-            android:layout_marginTop="100dp"
-            android:background="@drawable/input_field_login"
-            android:drawableStart="@drawable/ic_perm_identity"
-            android:drawablePadding="5dp"
-            android:ems="10"
-            android:fontFamily="@font/regular"
-            android:hint="@string/e_mail"
-            android:inputType="textPersonName"
-            android:textColorHint="@color/gray_dark"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintHorizontal_bias="0.495"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/tvWriteYourCredentials" />
-
-        <EditText
-            android:id="@+id/etPasswordLogin"
-            android:layout_width="308dp"
-            android:layout_height="41dp"
-            android:layout_marginTop="20dp"
-            android:background="@drawable/input_field_login"
-            android:drawableStart="@drawable/ic_vpn_key"
-            android:drawablePadding="5dp"
-            android:ems="10"
-            android:fontFamily="@font/regular"
-            android:hint="@string/password"
-            android:inputType="textPassword"
-            android:textColorHint="@color/gray_dark"
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintHorizontal_bias="0.495"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/etEmailLogin"
-            app:layout_constraintVertical_bias="0.031" />
     </androidx.constraintlayout.widget.ConstraintLayout>
 </FrameLayout>

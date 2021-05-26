@@ -11,13 +11,12 @@ import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.bessarez.ecommercemobile.R;
-import com.bessarez.ecommercemobile.interfaces.OnProductListener;
+import com.bessarez.ecommercemobile.interfaces.OnItemClickListener;
 import com.bessarez.ecommercemobile.ui.models.CardOrder;
 import com.bessarez.ecommercemobile.ui.models.CardOrderItem;
 import com.bessarez.ecommercemobile.ui.models.ListOrderItem;
 import com.squareup.picasso.Picasso;
 
-import java.text.DecimalFormat;
 import java.util.List;
 
 public class OrderAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
@@ -25,12 +24,12 @@ public class OrderAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> 
     private Context mContext;
     List<ListOrderItem> consolidatedList;
 
-    private OnProductListener mOnProductListener;
+    private OnItemClickListener mOnItemClickListener;
 
-    public OrderAdapter(Context mContext, List<ListOrderItem> consolidatedList, OnProductListener onProductListener) {
+    public OrderAdapter(Context mContext, List<ListOrderItem> consolidatedList, OnItemClickListener onItemClickListener) {
         this.mContext = mContext;
         this.consolidatedList = consolidatedList;
-        this.mOnProductListener = onProductListener;
+        this.mOnItemClickListener = onItemClickListener;
     }
 
     class OrderViewHolder extends RecyclerView.ViewHolder {
@@ -51,19 +50,19 @@ public class OrderAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> 
 
         protected TextView tv_product_title;
 
-        protected OnProductListener onProductListener;
+        protected OnItemClickListener onItemClickListener;
 
-        public OrderItemViewHolder(@NonNull View itemView, OnProductListener onProductListener) {
+        public OrderItemViewHolder(@NonNull View itemView, OnItemClickListener onItemClickListener) {
             super(itemView);
             this.iv_product = itemView.findViewById(R.id.iv_product);
             this.tv_product_title = itemView.findViewById(R.id.tv_product_title);
-            this.onProductListener = onProductListener;
+            this.onItemClickListener = onItemClickListener;
             itemView.setOnClickListener(this);
         }
 
         @Override
         public void onClick(View v) {
-            onProductListener.onProductClick(getAdapterPosition());
+            onItemClickListener.onItemClick(v,getAdapterPosition());
         }
     }
 
@@ -81,7 +80,7 @@ public class OrderAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> 
                 break;
             case ListOrderItem.TYPE_ORDER_ITEM:
                 View v2 = inflater.inflate(R.layout.card_order_product, parent, false);
-                viewHolder = new OrderItemViewHolder(v2, mOnProductListener);
+                viewHolder = new OrderItemViewHolder(v2, mOnItemClickListener);
                 break;
         }
 

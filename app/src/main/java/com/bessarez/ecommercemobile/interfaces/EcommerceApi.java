@@ -30,6 +30,7 @@ import retrofit2.http.DELETE;
 import retrofit2.http.GET;
 import retrofit2.http.Header;
 import retrofit2.http.POST;
+import retrofit2.http.PUT;
 import retrofit2.http.Path;
 
 public interface EcommerceApi {
@@ -56,6 +57,9 @@ public interface EcommerceApi {
 
     @POST("/login")
     Call<ApiToken> login(@Body ApiLogin apiLogin);
+
+    @POST("/registered_users")
+    Call<RegisteredUser> signup(@Body RegisteredUser newUser);
 
     @POST("/wish_products")
     Call<ApiWishProduct> addProductToWishList(@Body ApiWishProduct apiWishProduct);
@@ -90,6 +94,15 @@ public interface EcommerceApi {
     @GET("/carts/registered_users/{userId}")
     Call<Cart> getUserCart(@Path("userId") Long userId);
 
+    @POST("/carts/registered_users/{userId}")
+    Call<CartItem> addItemToCart(@Path("userId") Long userId, @Body CartItem cartItem);
+
     @DELETE("/carts/registered_users/{userId}")
     Call<Void> removeAllCartItems(@Path("userId") Long userId);
+
+    @DELETE("/carts/cart_item/{cartItemId}")
+    Call<Void> removeCartItem(@Path("cartItemId") Long cartItemId);
+
+    @PUT("/carts/cart_item/{cartItemId}/quantity/{quantity}")
+    Call<CartItem> updateCartItemQuantity(@Path("cartItemId") Long cartItemId, @Path("quantity") int quantity);
 }

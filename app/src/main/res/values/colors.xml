@@ -9,9 +9,9 @@
     <color name="primary">#2f3136</color>
     <color name="primary_light">#585a60</color>
     <color name="primary_extralight">#868991</color>
-    <color name="secondary">#ea614b</color>
+    <color name="secondary">#ff6e40</color>
     <color name="secondary_light_lighter">#ffc9bc</color>
-    <color name="secondary_light">#ff9277</color>
+    <color name="secondary_light">#ff9e80</color>
     <color name="secondary_lighter">#e99183</color>
     <color name="secondary_dark">#ad5249</color>
     <color name="secondary_dark_lighter">#b22f22</color>

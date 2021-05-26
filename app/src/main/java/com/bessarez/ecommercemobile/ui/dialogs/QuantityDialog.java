@@ -16,22 +16,30 @@ import androidx.fragment.app.DialogFragment;
 
 import com.bessarez.ecommercemobile.R;
 
-public class ProductOrderQuantityDialog extends DialogFragment implements AdapterView.OnItemClickListener {
+public class QuantityDialog extends DialogFragment implements AdapterView.OnItemClickListener {
 
     public interface OnQuantityListener {
-        void sendQuantity(Integer quantity);
+        void sendQuantity(Integer quantity, Integer position);
     }
 
-    public static String TAG = "ProductOrderQuantityDialog";
+    public static String TAG = "QuantityDialog";
 
     public OnQuantityListener onQuantityListener;
 
     private ListView rvQuantityList;
-    private int maxQuantity;
+    private Integer maxQuantity;
+    private Integer position;
 
-    public ProductOrderQuantityDialog(int stock) {
+    /**
+     *
+     * @param stock Stock of given item
+     * @param position Used if dialog is opened from recyclerlist to update quantity of given item
+     */
+
+    public QuantityDialog(Integer stock, Integer position) {
         super();
         this.maxQuantity = Math.min(stock, 12);
+        this.position = position;
     }
 
     @Override
@@ -52,7 +60,7 @@ public class ProductOrderQuantityDialog extends DialogFragment implements Adapte
         AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
 
         LayoutInflater inflater = getActivity().getLayoutInflater();
-        View view = inflater.inflate(R.layout.dialog_product_order_quantity, null);
+        View view = inflater.inflate(R.layout.dialog_quantity, null);
 
         builder.setView(view);
 
@@ -72,7 +80,7 @@ public class ProductOrderQuantityDialog extends DialogFragment implements Adapte
     @Override
     public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
         Integer quantity = (Integer) parent.getItemAtPosition(position);
-        onQuantityListener.sendQuantity(quantity);
+        onQuantityListener.sendQuantity(quantity, this.position);
         getDialog().dismiss();
     }
 

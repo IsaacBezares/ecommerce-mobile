@@ -15,9 +15,8 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.bessarez.ecommercemobile.R;
-import com.bessarez.ecommercemobile.interfaces.OnProductListener;
+import com.bessarez.ecommercemobile.interfaces.OnItemClickListener;
 import com.bessarez.ecommercemobile.models.apimodels.ApiProduct;
-import com.bessarez.ecommercemobile.models.apimodels.ApiWishProduct;
 import com.bessarez.ecommercemobile.models.apimodels.ApiWishProducts;
 import com.bessarez.ecommercemobile.ui.models.CardProduct;
 import com.bessarez.ecommercemobile.ui.adapters.CardProductAdapter;
@@ -32,7 +31,7 @@ import retrofit2.Response;
 import static android.content.ContentValues.TAG;
 import static com.bessarez.ecommercemobile.connector.ApiClient.getApiService;
 
-public class WishListFragment extends Fragment implements OnProductListener {
+public class WishListFragment extends Fragment implements OnItemClickListener {
 
     List<CardProduct> products;
     CardProductAdapter cardProductAdapter;
@@ -86,12 +85,12 @@ public class WishListFragment extends Fragment implements OnProductListener {
             }
         });
 
-        cardProductAdapter = new CardProductAdapter(products, getContext(), this::onProductClick);
+        cardProductAdapter = new CardProductAdapter(products, getContext(), this::onItemClick);
         recyclerView.setAdapter(cardProductAdapter);
     }
 
     @Override
-    public void onProductClick(int position) {
+    public void onItemClick(View view, int position) {
         Long productId = products.get(position).getId();
         WishListFragmentDirections.ActionNavWishListToNavProduct action = WishListFragmentDirections.actionNavWishListToNavProduct(productId);
         Navigation.findNavController(getView()).navigate(action);

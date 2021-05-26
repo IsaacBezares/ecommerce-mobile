@@ -16,7 +16,7 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.bessarez.ecommercemobile.R;
-import com.bessarez.ecommercemobile.interfaces.OnProductListener;
+import com.bessarez.ecommercemobile.interfaces.OnItemClickListener;
 import com.bessarez.ecommercemobile.models.OrderProduct;
 import com.bessarez.ecommercemobile.models.UserOrder;
 import com.bessarez.ecommercemobile.models.apimodels.ApiUserOrders;
@@ -25,7 +25,6 @@ import com.bessarez.ecommercemobile.ui.adapters.OrderAdapter;
 import com.bessarez.ecommercemobile.ui.models.CardOrder;
 import com.bessarez.ecommercemobile.ui.models.CardOrderItem;
 
-import java.text.DecimalFormat;
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
@@ -37,7 +36,7 @@ import retrofit2.Response;
 import static android.content.ContentValues.TAG;
 import static com.bessarez.ecommercemobile.connector.ApiClient.getApiService;
 
-public class OrdersFragment extends Fragment implements OnProductListener {
+public class OrdersFragment extends Fragment implements OnItemClickListener {
 
     private List<ListOrderItem> consolidatedList = new ArrayList<>();
 
@@ -75,7 +74,7 @@ public class OrdersFragment extends Fragment implements OnProductListener {
 
         if (userId == 0) return;
 
-        orderAdapter =  new OrderAdapter(getContext(), consolidatedList, this::onProductClick);
+        orderAdapter =  new OrderAdapter(getContext(), consolidatedList, this);
 
         Call<ApiUserOrders> userOrders = getApiService().getUserOrders(userId);
         userOrders.enqueue(new Callback<ApiUserOrders>() {
@@ -126,7 +125,7 @@ public class OrdersFragment extends Fragment implements OnProductListener {
     }
 
     @Override
-    public void onProductClick(int position) {
+    public void onItemClick(View view, int position) {
         Log.d(TAG, "onProductClick: hizo algo");
         Long productId = ((CardOrderItem) consolidatedList.get(position)).getId();
         OrdersFragmentDirections.ActionNavOrdersToNavProduct action = OrdersFragmentDirections.actionNavOrdersToNavProduct(productId);

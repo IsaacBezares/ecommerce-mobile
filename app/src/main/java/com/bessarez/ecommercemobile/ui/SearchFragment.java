@@ -4,10 +4,14 @@ import android.content.Context;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 
+import androidx.activity.OnBackPressedCallback;
 import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 import androidx.appcompat.widget.SearchView;
 import androidx.fragment.app.Fragment;
+import androidx.fragment.app.FragmentManager;
 import androidx.navigation.NavController;
+import androidx.navigation.NavDirections;
 import androidx.navigation.Navigation;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
@@ -21,7 +25,7 @@ import android.view.View;
 import android.view.ViewGroup;
 
 import com.bessarez.ecommercemobile.R;
-import com.bessarez.ecommercemobile.interfaces.OnSearchSuggestionListener;
+import com.bessarez.ecommercemobile.interfaces.OnItemClickListener;
 import com.bessarez.ecommercemobile.models.RecentSearch;
 import com.bessarez.ecommercemobile.models.RegisteredUser;
 import com.bessarez.ecommercemobile.models.apimodels.ApiRecentSearch;
@@ -49,7 +53,7 @@ import retrofit2.Response;
 import static android.content.ContentValues.TAG;
 import static com.bessarez.ecommercemobile.connector.ApiClient.getApiService;
 
-public class SearchFragment extends Fragment implements OnSearchSuggestionListener {
+public class SearchFragment extends Fragment implements OnItemClickListener{
 
     List<SearchSuggestion> recentSearches;
     List<SearchSuggestion> searchSuggestions;
@@ -87,6 +91,19 @@ public class SearchFragment extends Fragment implements OnSearchSuggestionListen
 
         MenuItem searchItem = menu.findItem(R.id.nav_search);
         searchItem.expandActionView();
+
+        searchItem.setOnActionExpandListener(new MenuItem.OnActionExpandListener() {
+            @Override
+            public boolean onMenuItemActionExpand(MenuItem item) {
+                return false;
+            }
+
+            @Override
+            public boolean onMenuItemActionCollapse(MenuItem item) {
+                Navigation.findNavController(getView()).navigateUp();
+                return false;
+            }
+        });
 
         searchView = (SearchView) searchItem.getActionView();
 
@@ -240,7 +257,7 @@ public class SearchFragment extends Fragment implements OnSearchSuggestionListen
     }
 
     @Override
-    public void onSuggestionClick(View v, int position) {
+    public void onItemClick(View v, int position) {
         if (v.getId() == R.id.ib_replace_text) {
             searchView.setQuery(searchSuggestions.get(position).getName(), false);
             //-1 for viewholder of recycler item
@@ -263,4 +280,6 @@ public class SearchFragment extends Fragment implements OnSearchSuggestionListen
         SharedPreferences sharedPreferences = getContext().getSharedPreferences("credentials", Context.MODE_PRIVATE);
         return sharedPreferences.getLong("userId", 0);
     }
+
+
 }

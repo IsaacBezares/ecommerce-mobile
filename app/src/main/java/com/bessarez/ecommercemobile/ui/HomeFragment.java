@@ -1,8 +1,6 @@
 package com.bessarez.ecommercemobile.ui;
 
 import android.content.Context;
-import android.content.Intent;
-import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -11,23 +9,16 @@ import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.TextView;
 
 import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
-import androidx.appcompat.app.ActionBar;
 import androidx.fragment.app.Fragment;
-import androidx.navigation.NavController;
 import androidx.navigation.NavDirections;
-import androidx.navigation.NavOptions;
 import androidx.navigation.Navigation;
-import androidx.navigation.ui.NavigationUI;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
-import com.bessarez.ecommercemobile.MainActivity;
 import com.bessarez.ecommercemobile.R;
-import com.bessarez.ecommercemobile.interfaces.OnProductListener;
+import com.bessarez.ecommercemobile.interfaces.OnItemClickListener;
 import com.bessarez.ecommercemobile.models.CarouselImage;
 import com.bessarez.ecommercemobile.models.apimodels.ApiCarouselImages;
 import com.bessarez.ecommercemobile.models.apimodels.ApiProducts;
@@ -38,7 +29,6 @@ import static com.bessarez.ecommercemobile.connector.ApiClient.getApiService;
 
 import com.denzcoskun.imageslider.ImageSlider;
 import com.denzcoskun.imageslider.models.SlideModel;
-import com.google.android.material.navigation.NavigationView;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -49,7 +39,7 @@ import retrofit2.Response;
 
 import static android.content.ContentValues.TAG;
 
-public class HomeFragment extends Fragment implements OnProductListener {
+public class HomeFragment extends Fragment implements OnItemClickListener {
 
     List<CardProduct> products;
     CardProductAdapter cardProductAdapter;
@@ -151,7 +141,7 @@ public class HomeFragment extends Fragment implements OnProductListener {
     }
 
     @Override
-    public void onProductClick(int position) {
+    public void onItemClick(View view, int position) {
         Long productId = products.get(position).getId();
         HomeFragmentDirections.ActionNavHomeToProductFragment action = HomeFragmentDirections.actionNavHomeToProductFragment(productId);
         Navigation.findNavController(getView()).navigate(action);
@@ -161,6 +151,9 @@ public class HomeFragment extends Fragment implements OnProductListener {
     public boolean onOptionsItemSelected(@NonNull MenuItem item) {
         if (item.getItemId() == R.id.nav_search){
             NavDirections action = HomeFragmentDirections.actionNavHomeToSearchFragment();
+            Navigation.findNavController(getView()).navigate(action);
+        } else if (item.getItemId() == R.id.nav_cart){
+            NavDirections action = HomeFragmentDirections.actionNavHomeToCartFragment();
             Navigation.findNavController(getView()).navigate(action);
         }
         return super.onOptionsItemSelected(item);

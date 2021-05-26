@@ -9,12 +9,15 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.widget.AppCompatButton;
 import androidx.fragment.app.Fragment;
+import androidx.navigation.NavDirections;
+import androidx.navigation.Navigation;
 
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.EditText;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.bessarez.ecommercemobile.MainActivity;
@@ -30,11 +33,10 @@ import retrofit2.Response;
 import static android.content.ContentValues.TAG;
 import static com.bessarez.ecommercemobile.connector.ApiClient.getApiService;
 
-public class LoginFragment extends Fragment implements View.OnClickListener {
+public class LoginFragment extends Fragment {
 
     private AppCompatButton btnLogin;
     private EditText etEmail, etPassword;
-    private String email, password;
 
     @Nullable
     @Override
@@ -44,8 +46,14 @@ public class LoginFragment extends Fragment implements View.OnClickListener {
         btnLogin = view.findViewById(R.id.btnLogin);
         etEmail = view.findViewById(R.id.etEmailLogin);
         etPassword = view.findViewById(R.id.etPasswordLogin);
+        TextView tvCreateAccount = view.findViewById(R.id.tvCreateAccount);
 
-        btnLogin.setOnClickListener(this);
+        btnLogin.setOnClickListener(v ->  login(etEmail.getText().toString(), etPassword.getText().toString()));
+
+        tvCreateAccount.setOnClickListener(v -> {
+            NavDirections action = LoginFragmentDirections.actionNavLoginToNavSignup1();
+            Navigation.findNavController(view).navigate(action);
+        });
 
         return view;
     }
@@ -111,12 +119,5 @@ public class LoginFragment extends Fragment implements View.OnClickListener {
     private void reloadActivity(){
         Intent intent = new Intent(getActivity(), MainActivity.class);
         startActivity(intent);
-    }
-
-    @Override
-    public void onClick(View v) {
-        email = etEmail.getText().toString();
-        password = etPassword.getText().toString();
-        login(email,password);
     }
 }

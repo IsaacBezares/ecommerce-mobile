@@ -4,7 +4,6 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
-import android.os.Handler;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
@@ -16,7 +15,6 @@ import androidx.annotation.Nullable;
 import androidx.appcompat.app.ActionBar;
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.appcompat.widget.Toolbar;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
@@ -131,14 +129,14 @@ public class CheckoutActivity extends AppCompatActivity {
 
                 Cart cart = response.body();
 
-                checkoutList = cart.getCartItems().stream()
-                        .map(item -> new CardCheckoutItem(
-                                item.getId(),
-                                item.getQuantity(),
-                                item.getProduct().getName(),
-                                null,
-                                item.getProduct().getPrice()))
-                        .collect(Collectors.toList());
+                cart.getCartItems().stream()
+                    .map(item -> new CardCheckoutItem(
+                            item.getProduct().getId(),
+                            item.getQuantity(),
+                            item.getProduct().getName(),
+                            null,
+                            item.getProduct().getPrice()))
+                    .forEach(checkoutList :: add);
                 adapter.notifyDataSetChanged();
                 startCheckout();
             }
@@ -154,7 +152,7 @@ public class CheckoutActivity extends AppCompatActivity {
     private void startCheckout() {
         //convert to cartList for api
         List<CartItem> cartItems = checkoutList.stream()
-                .map(cardItem -> new CartItem(cardItem.getQuantity(), new Product(cardItem.getId())))
+                .map(cardItem -> new CartItem(cardItem.getQuantity(), new Product(cardItem.getProductId())))
                 .collect(Collectors.toList());
 
         // Create a PaymentIntent by calling the server's endpoint.
@@ -286,7 +284,7 @@ public class CheckoutActivity extends AppCompatActivity {
                 Long userId = activity.getUserIdPreferences();
 
                 List<OrderProduct> orderProducts = activity.checkoutList.stream()
-                        .map(item -> new OrderProduct(item.getQuantity(), new Product(item.getId())))
+                        .map(item -> new OrderProduct(item.getQuantity(), new Product(item.getProductId())))
                         .collect(Collectors.toList());
 
                 UserOrder order = new UserOrder(

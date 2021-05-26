@@ -16,10 +16,14 @@
             app:destination="@id/nav_product" />
         <action
             android:id="@+id/action_nav_home_to_searchFragment"
-            app:destination="@id/nav_search" />
+            app:destination="@id/nav_search"
+            app:popUpToInclusive="false" />
         <action
             android:id="@+id/action_nav_home_to_loginFragment"
             app:destination="@id/nav_login" />
+        <action
+            android:id="@+id/action_nav_home_to_cartFragment"
+            app:destination="@id/nav_cart" />
     </fragment>
 
     <fragment
@@ -53,6 +57,9 @@
         <argument
             android:name="productId"
             app:argType="long" />
+        <action
+            android:id="@+id/action_nav_product_to_nav_cart"
+            app:destination="@id/nav_cart" />
     </fragment>
     <fragment
         android:id="@+id/nav_search"
@@ -61,7 +68,8 @@
         tools:layout="@layout/fragment_search" >
         <action
             android:id="@+id/action_nav_search_to_nav_product"
-            app:destination="@id/nav_product" />
+            app:destination="@id/nav_product"
+            app:popUpTo="@id/nav_home" />
         <action
             android:id="@+id/action_nav_search_to_searchableFragment"
             app:destination="@id/nav_search_result"
@@ -76,6 +84,9 @@
         <action
             android:id="@+id/action_loginFragment_to_nav_home"
             app:destination="@id/nav_home" />
+        <action
+            android:id="@+id/action_nav_login_to_nav_signup1"
+            app:destination="@id/nav_signup1" />
     </fragment>
     <fragment
         android:id="@+id/nav_search_result"
@@ -88,5 +99,25 @@
         <action
             android:id="@+id/action_nav_search_result_to_nav_product"
             app:destination="@id/nav_product" />
+    </fragment>
+    <fragment
+        android:id="@+id/nav_cart"
+        android:name="com.bessarez.ecommercemobile.ui.CartFragment"
+        android:label="@string/shopping_cart"
+        tools:layout="@layout/fragment_cart">
+        <action
+            android:id="@+id/action_cartFragment_to_nav_product"
+            app:destination="@id/nav_product" />
+    </fragment>
+    <fragment
+        android:id="@+id/nav_signup1"
+        android:name="com.bessarez.ecommercemobile.ui.Signup1Fragment"
+        android:label="@string/blank"
+        tools:layout="@layout/fragment_signup1" >
+        <action
+            android:id="@+id/action_nav_signup1_to_nav_login"
+            app:destination="@id/nav_login"
+            app:popUpTo="@id/nav_home"
+            app:popUpToInclusive="true" />
     </fragment>
 </navigation>

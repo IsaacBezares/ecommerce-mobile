@@ -11,7 +11,7 @@ import androidx.appcompat.widget.AppCompatTextView;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.bessarez.ecommercemobile.R;
-import com.bessarez.ecommercemobile.interfaces.OnProductListener;
+import com.bessarez.ecommercemobile.interfaces.OnItemClickListener;
 import com.bessarez.ecommercemobile.ui.models.CardProduct;
 import com.squareup.picasso.Picasso;
 
@@ -22,13 +22,13 @@ public class CardProductAdapter extends RecyclerView.Adapter<CardProductAdapter.
     private LayoutInflater mInflater;
     private Context mContext;
 
-    private OnProductListener mOnProductListener;
+    private OnItemClickListener mOnItemClickListener;
 
-    public CardProductAdapter(List<CardProduct> mData, Context mContext, OnProductListener onProductListener) {
+    public CardProductAdapter(List<CardProduct> mData, Context mContext, OnItemClickListener onItemClickListener) {
         this.mInflater = LayoutInflater.from(mContext);
         this.mData = mData;
         this.mContext = mContext;
-        this.mOnProductListener = onProductListener;
+        this.mOnItemClickListener = onItemClickListener;
     }
 
 
@@ -37,7 +37,7 @@ public class CardProductAdapter extends RecyclerView.Adapter<CardProductAdapter.
     @Override
     public ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
         View view = mInflater.inflate(R.layout.card_product, parent, false);
-        return new ViewHolder(view,mOnProductListener);
+        return new ViewHolder(view, mOnItemClickListener);
     }
 
     @Override
@@ -59,21 +59,21 @@ public class CardProductAdapter extends RecyclerView.Adapter<CardProductAdapter.
     public class ViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener {
         AppCompatImageView image;
         AppCompatTextView title, price;
-        OnProductListener onProductListener;
+        OnItemClickListener onItemClickListener;
 
-        ViewHolder(View itemView, OnProductListener onProductListener){
+        ViewHolder(View itemView, OnItemClickListener onItemClickListener){
             super(itemView);
             image = itemView.findViewById(R.id.iv_product);
             title = itemView.findViewById(R.id.tv_product_title);
             price = itemView.findViewById(R.id.tv_product_price);
-            this.onProductListener = onProductListener;
+            this.onItemClickListener = onItemClickListener;
             itemView.setOnClickListener(this);
         }
 
 
         @Override
         public void onClick(View v) {
-            onProductListener.onProductClick(getAdapterPosition());
+            onItemClickListener.onItemClick(v, getAdapterPosition());
         }
     }
 }

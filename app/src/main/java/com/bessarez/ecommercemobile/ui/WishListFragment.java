@@ -9,7 +9,9 @@ import android.view.View;
 import android.view.ViewGroup;
 
 import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
+import androidx.navigation.NavDirections;
 import androidx.navigation.Navigation;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
@@ -38,11 +40,16 @@ public class WishListFragment extends Fragment implements OnItemClickListener {
 
     public View onCreateView(@NonNull LayoutInflater inflater,
                              ViewGroup container, Bundle savedInstanceState) {
-        View view = inflater.inflate(R.layout.fragment_wish_list, container, false);
+        return inflater.inflate(R.layout.fragment_wish_list, container, false);
+    }
 
+    @Override
+    public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
+        super.onViewCreated(view, savedInstanceState);
+        if (!isUserLoggedIn()){
+            navigateWithAction(WishListFragmentDirections.actionNavWishListToNavLogin());
+        }
         loadRecycler(view);
-
-        return view;
     }
 
     private void loadRecycler(View view) {
@@ -93,6 +100,19 @@ public class WishListFragment extends Fragment implements OnItemClickListener {
     public void onItemClick(View view, int position) {
         Long productId = products.get(position).getId();
         WishListFragmentDirections.ActionNavWishListToNavProduct action = WishListFragmentDirections.actionNavWishListToNavProduct(productId);
+        Navigation.findNavController(getView()).navigate(action);
+    }
+
+    private boolean isUserLoggedIn() {
+        return getUserIdFromPreferences() != 0;
+    }
+
+    private Long getUserIdFromPreferences() {
+        SharedPreferences preferences = getContext().getSharedPreferences("credentials", Context.MODE_PRIVATE);
+        return preferences.getLong("userId", 0);
+    }
+
+    private void navigateWithAction(NavDirections action){
         Navigation.findNavController(getView()).navigate(action);
     }
 }

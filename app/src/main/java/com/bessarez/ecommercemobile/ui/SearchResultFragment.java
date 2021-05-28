@@ -2,6 +2,7 @@ package com.bessarez.ecommercemobile.ui;
 
 import android.os.Bundle;
 
+import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 import androidx.navigation.Navigation;
@@ -36,6 +37,18 @@ public class SearchResultFragment extends Fragment implements OnItemClickListene
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+    }
+
+    @Override
+    public View onCreateView(LayoutInflater inflater, ViewGroup container,
+                             Bundle savedInstanceState) {
+        return inflater.inflate(R.layout.fragment_search_result, container, false);
+    }
+
+    @Override
+    public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
+        super.onViewCreated(view, savedInstanceState);
+
         resultProducts = new ArrayList<>();
         cardProductAdapter = new CardProductAdapter(resultProducts, getContext(), this);
 
@@ -74,18 +87,8 @@ public class SearchResultFragment extends Fragment implements OnItemClickListene
 
             }
         });
-    }
-
-    @Override
-    public View onCreateView(LayoutInflater inflater, ViewGroup container,
-                             Bundle savedInstanceState) {
-        // Inflate the layout for this fragment
-
-        View view = inflater.inflate(R.layout.fragment_search_result, container, false);
 
         loadRecycler(view);
-
-        return view;
     }
 
     private void loadRecycler(View view) {

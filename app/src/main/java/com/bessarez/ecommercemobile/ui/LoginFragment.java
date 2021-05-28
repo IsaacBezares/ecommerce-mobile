@@ -41,8 +41,12 @@ public class LoginFragment extends Fragment {
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
-        View view = inflater.inflate(R.layout.fragment_login, container, false);
+        return inflater.inflate(R.layout.fragment_login, container, false);
+    }
 
+    @Override
+    public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
+        super.onViewCreated(view, savedInstanceState);
         btnLogin = view.findViewById(R.id.btnLogin);
         etEmail = view.findViewById(R.id.etEmailLogin);
         etPassword = view.findViewById(R.id.etPasswordLogin);
@@ -54,8 +58,6 @@ public class LoginFragment extends Fragment {
             NavDirections action = LoginFragmentDirections.actionNavLoginToNavSignup1();
             Navigation.findNavController(view).navigate(action);
         });
-
-        return view;
     }
 
     private void saveUserData(String token, String email) {

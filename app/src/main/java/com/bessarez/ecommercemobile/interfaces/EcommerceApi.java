@@ -47,9 +47,6 @@ public interface EcommerceApi {
     @GET("/products/{id}")
     Call<Product> getProduct(@Path("id") Long id);
 
-    @GET("/registered_users")
-    Call<ApiRegisteredUsers> getRegisteredUsers();
-
     @GET("/registered_users/email/{email}")
     Call<RegisteredUser> getRegisteredUserByEmail(
             @Path("email") String email,
@@ -79,8 +76,8 @@ public interface EcommerceApi {
     @GET("/products/search/{query}")
     Call<ApiProducts> getSearchResults(@Path("query") String query);
 
-    @POST("/ephemeral_keys")
-    Call<EphemeralKeyResponse> createEphemeralKey(@Body EphemeralKeyRequest eKeyRequest);
+    @PUT("/products/{id}/purchase/{quantity}")
+    Call<Product> purchase(@Path("id") Long id, @Path("quantity") int quantity);
 
     @POST("/create_payment_intent")
     Call<PaymentIntentResponse> createPaymentIntent(@Body List<CartItem> checkoutList);

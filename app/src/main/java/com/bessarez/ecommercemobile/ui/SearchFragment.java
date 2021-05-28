@@ -4,14 +4,10 @@ import android.content.Context;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 
-import androidx.activity.OnBackPressedCallback;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.widget.SearchView;
 import androidx.fragment.app.Fragment;
-import androidx.fragment.app.FragmentManager;
-import androidx.navigation.NavController;
-import androidx.navigation.NavDirections;
 import androidx.navigation.Navigation;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
@@ -68,7 +64,13 @@ public class SearchFragment extends Fragment implements OnItemClickListener{
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
-        View view = inflater.inflate(R.layout.fragment_search, container, false);
+        return inflater.inflate(R.layout.fragment_search, container, false);
+    }
+
+    @Override
+    public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
+        super.onViewCreated(view, savedInstanceState);
+
         setHasOptionsMenu(true);
 
         recentSearches = new ArrayList<>();
@@ -79,9 +81,9 @@ public class SearchFragment extends Fragment implements OnItemClickListener{
         recyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
         recyclerView.setAdapter(searchSuggestionAdapter);
 
-        Long userId = getUserIdPreferences();
-        getRecentSearches(userId);
-        return view;
+        if (isUserLoggedIn()) {
+            getRecentSearches(getUserIdFromPreferences());
+        }
     }
 
     @Override
@@ -127,11 +129,11 @@ public class SearchFragment extends Fragment implements OnItemClickListener{
                         searchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
                             @Override
                             public boolean onQueryTextSubmit(String query) {
-                                SearchFragmentDirections.ActionNavSearchToSearchableFragment action = SearchFragmentDirections.actionNavSearchToSearchableFragment(query);
+                                SearchFragmentDirections.ActionNavSearchToNavSearchResult action = SearchFragmentDirections.actionNavSearchToNavSearchResult(query);
                                 Navigation.findNavController(getView()).navigate(action);
 
-                                Long userId = getUserIdPreferences();
-                                postRecentSearch(userId,query);
+                                if (isUserLoggedIn())
+                                    postRecentSearch(getUserIdFromPreferences(),query);
                                 return false;
                             }
 
@@ -266,7 +268,7 @@ public class SearchFragment extends Fragment implements OnItemClickListener{
 
             if (searchSuggestion.getType() == 1) {
                 String query = searchSuggestion.getName();
-                SearchFragmentDirections.ActionNavSearchToSearchableFragment action = SearchFragmentDirections.actionNavSearchToSearchableFragment(query);
+                SearchFragmentDirections.ActionNavSearchToNavSearchResult action = SearchFragmentDirections.actionNavSearchToNavSearchResult(query);
                 Navigation.findNavController(getView()).navigate(action);
             } else {
                 Long productId = searchSuggestion.getId();
@@ -276,9 +278,13 @@ public class SearchFragment extends Fragment implements OnItemClickListener{
         }
     }
 
-    private Long getUserIdPreferences(){
-        SharedPreferences sharedPreferences = getContext().getSharedPreferences("credentials", Context.MODE_PRIVATE);
-        return sharedPreferences.getLong("userId", 0);
+    private boolean isUserLoggedIn() {
+        return getUserIdFromPreferences() != 0;
+    }
+
+    private Long getUserIdFromPreferences() {
+        SharedPreferences preferences = getContext().getSharedPreferences("credentials", Context.MODE_PRIVATE);
+        return preferences.getLong("userId", 0);
     }
 
 

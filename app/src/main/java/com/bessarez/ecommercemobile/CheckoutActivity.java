@@ -281,46 +281,13 @@ public class CheckoutActivity extends AppCompatActivity {
             PaymentIntent.Status status = paymentIntent.getStatus();
             if (status == PaymentIntent.Status.Succeeded) {
                 // Payment completed successfully
-                Long userId = activity.getUserIdPreferences();
 
-                List<OrderProduct> orderProducts = activity.checkoutList.stream()
-                        .map(item -> new OrderProduct(item.getQuantity(), new Product(item.getProductId())))
-                        .collect(Collectors.toList());
+                activity.decreaseStock();
 
-                UserOrder order = new UserOrder(
-                        orderProducts,
-                        new RegisteredUser(userId)
-                );
+                activity.placeOrder();
 
-                Call<UserOrder> call = getApiService().addOrder(order);
-                call.enqueue(new Callback<UserOrder>() {
-                    @Override
-                    public void onResponse(Call<UserOrder> call, Response<UserOrder> response) {
-                        if (!response.isSuccessful()){
-                            Log.d(TAG, "onResponse: Algo falló");
-                        }
-                    }
-
-                    @Override
-                    public void onFailure(Call<UserOrder> call, Throwable t) {
-                        t.printStackTrace();
-                    }
-                });
-
-                if (activity.isCartCheckout){
-                    Call<Void> call2 = getApiService().removeAllCartItems(userId);
-                    call2.enqueue(new Callback<Void>() {
-                        @Override
-                        public void onResponse(Call<Void> call, Response<Void> response) {
-                            if (!response.isSuccessful()) Log.d(TAG, "onResponse: Algo falló");
-                        }
-
-                        @Override
-                        public void onFailure(Call<Void> call, Throwable t) {
-                            t.printStackTrace();
-                        }
-                    });
-                }
+                if (activity.isCartCheckout)
+                    activity.clearCart();
 
                 activity.displayAlert(
                         "Payment completed",
@@ -349,6 +316,62 @@ public class CheckoutActivity extends AppCompatActivity {
     private Long getUserIdPreferences(){
         SharedPreferences preferences = getSharedPreferences("credentials", Context.MODE_PRIVATE);
         return preferences.getLong("userId", 0);
+    }
+
+    private void placeOrder(){
+        List<OrderProduct> orderProducts = checkoutList.stream()
+                .map(item -> new OrderProduct(item.getQuantity(), new Product(item.getProductId())))
+                .collect(Collectors.toList());
+
+        UserOrder order = new UserOrder(
+                orderProducts,
+                new RegisteredUser(getUserIdPreferences())
+        );
+
+        Call<UserOrder> call = getApiService().addOrder(order);
+        call.enqueue(new Callback<UserOrder>() {
+            @Override
+            public void onResponse(Call<UserOrder> call, Response<UserOrder> response) {
+                if (!response.isSuccessful()){
+                    Log.d(TAG, "onResponse: Algo falló");
+                }
+            }
+
+            @Override
+            public void onFailure(Call<UserOrder> call, Throwable t) {
+                t.printStackTrace();
+            }
+        });
+    }
+
+    private void clearCart(){
+        Call<Void> call2 = getApiService().removeAllCartItems(getUserIdPreferences());
+        call2.enqueue(new Callback<Void>() {
+            @Override
+            public void onResponse(Call<Void> call, Response<Void> response) {
+                if (!response.isSuccessful()) Log.d(TAG, "onResponse: Algo falló");
+            }
+
+            @Override
+            public void onFailure(Call<Void> call, Throwable t) {
+                t.printStackTrace();
+            }
+        });
+    }
+
+
+    private void decreaseStock() {
+        checkoutList.stream()
+                .map(item -> getApiService().purchase(item.getProductId(),item.getQuantity()))
+                .forEach(call -> call.enqueue(new Callback<Product>() {
+                    @Override
+                    public void onResponse(Call<Product> call, Response<Product> response) {
+                        if (!response.isSuccessful()) Log.d(TAG, "onResponse: Algo falló");
+                    }
+
+                    @Override
+                    public void onFailure(Call<Product> call, Throwable t) { t.printStackTrace(); }
+                }));
     }
 
     @Override

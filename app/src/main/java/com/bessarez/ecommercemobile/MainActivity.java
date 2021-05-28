@@ -3,13 +3,16 @@ package com.bessarez.ecommercemobile;
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.os.Bundle;
+import android.view.MenuItem;
 import android.view.View;
 import android.widget.TextView;
 
 import com.google.android.material.navigation.NavigationView;
 
+import androidx.annotation.NonNull;
 import androidx.core.view.GravityCompat;
 import androidx.navigation.NavController;
+import androidx.navigation.NavDirections;
 import androidx.navigation.Navigation;
 import androidx.navigation.ui.AppBarConfiguration;
 import androidx.navigation.ui.NavigationUI;
@@ -32,6 +35,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         NavigationView navigationView = findViewById(R.id.nav_view);
         // Passing each menu ID as a set of Ids because each
         // menu should be considered as top level destinations.
+
         mAppBarConfiguration = new AppBarConfiguration.Builder(
                 R.id.nav_home, R.id.nav_orders, R.id.nav_wish_list, R.id.nav_settings, R.id.nav_product, R.id.nav_search_result, R.id.nav_cart)
                 .setOpenableLayout(drawer)
@@ -74,10 +78,10 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         }
     }
 
-    @Override
+/*    @Override
     public boolean onSearchRequested() {
         return true;
-    }
+    }*/
 
     @Override
     public void onClick(View v) {
@@ -87,5 +91,4 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         navController.navigateUp();
         navController.navigate(R.id.nav_login);
     }
-
 }

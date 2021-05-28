@@ -2,6 +2,8 @@ package com.bessarez.ecommercemobile.ui;
 
 import android.os.Bundle;
 
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 import androidx.appcompat.widget.AppCompatButton;
 import androidx.fragment.app.Fragment;
 import androidx.navigation.NavDirections;
@@ -35,7 +37,12 @@ public class Signup1Fragment extends Fragment {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-        View view  = inflater.inflate(R.layout.fragment_signup1, container, false);
+        return inflater.inflate(R.layout.fragment_signup1, container, false);
+    }
+
+    @Override
+    public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
+        super.onViewCreated(view, savedInstanceState);
 
         etFirstName = view.findViewById(R.id.et_first_name);
         etLastName = view.findViewById(R.id.et_last_name);
@@ -80,8 +87,6 @@ public class Signup1Fragment extends Fragment {
             }
 
         });
-
-        return view;
     }
 
     private boolean isFormFulfilled(){

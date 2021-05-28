@@ -5,9 +5,11 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 
+import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.widget.AppCompatButton;
 import androidx.fragment.app.Fragment;
+import androidx.navigation.NavDirections;
 import androidx.navigation.Navigation;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
@@ -45,14 +47,18 @@ public class CartFragment extends Fragment implements OnItemClickListener, Quant
     private TextView tvTotalPrice;
 
     @Override
-    public void onCreate(@Nullable Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
+    public View onCreateView(LayoutInflater inflater, ViewGroup container,
+                             Bundle savedInstanceState) {
+        return inflater.inflate(R.layout.fragment_cart, container, false);
     }
 
     @Override
-    public View onCreateView(LayoutInflater inflater, ViewGroup container,
-                             Bundle savedInstanceState) {
-        View view = inflater.inflate(R.layout.fragment_cart, container, false);
+    public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
+        super.onViewCreated(view, savedInstanceState);
+
+        if (!isUserLoggedIn()){
+            navigateWithAction(CartFragmentDirections.actionNavCartToNavLogin());
+        }
 
         tvTotalPrice = view.findViewById(R.id.tv_total_price);
 
@@ -61,7 +67,6 @@ public class CartFragment extends Fragment implements OnItemClickListener, Quant
 
         loadRecycler(view);
         fillCartItems();
-        return view;
     }
 
     private void loadRecycler(View view) {
@@ -148,7 +153,7 @@ public class CartFragment extends Fragment implements OnItemClickListener, Quant
                 break;
             default:
                 long productId = cartItems.get(position).getProductId();
-                CartFragmentDirections.ActionCartFragmentToNavProduct action = CartFragmentDirections.actionCartFragmentToNavProduct(productId);
+                CartFragmentDirections.ActionNavCartToNavProduct action = CartFragmentDirections.actionNavCartToNavProduct(productId);
                 Navigation.findNavController(getView()).navigate(action);
         }
     }
@@ -180,5 +185,18 @@ public class CartFragment extends Fragment implements OnItemClickListener, Quant
                 .reduce(0.0, Double::sum);
 
         tvTotalPrice.setText(String.valueOf(totalPrice));
+    }
+
+    private boolean isUserLoggedIn() {
+        return getUserIdFromPreferences() != 0;
+    }
+
+    private Long getUserIdFromPreferences() {
+        SharedPreferences preferences = getContext().getSharedPreferences("credentials", Context.MODE_PRIVATE);
+        return preferences.getLong("userId", 0);
+    }
+
+    private void navigateWithAction(NavDirections action){
+        Navigation.findNavController(getView()).navigate(action);
     }
 }

@@ -10,12 +10,14 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.widget.AppCompatButton;
 import androidx.fragment.app.Fragment;
-import androidx.navigation.NavController;
 import androidx.navigation.NavDirections;
 import androidx.navigation.Navigation;
 
 import android.util.Log;
 import android.view.LayoutInflater;
+import android.view.Menu;
+import android.view.MenuInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
@@ -24,13 +26,14 @@ import android.widget.TextView;
 import com.bessarez.ecommercemobile.CheckoutActivity;
 import com.bessarez.ecommercemobile.R;
 import com.bessarez.ecommercemobile.models.CartItem;
-import com.bessarez.ecommercemobile.models.OrderProduct;
 import com.bessarez.ecommercemobile.models.Product;
 import com.bessarez.ecommercemobile.models.apimodels.ApiRegisteredUser;
 import com.bessarez.ecommercemobile.models.apimodels.ApiWishProduct;
 import com.bessarez.ecommercemobile.models.apimodels.ApiProduct;
 import com.bessarez.ecommercemobile.ui.dialogs.QuantityDialog;
 import com.squareup.picasso.Picasso;
+
+import org.jetbrains.annotations.NotNull;
 
 import retrofit2.Call;
 import retrofit2.Callback;
@@ -50,27 +53,26 @@ public class ProductFragment extends Fragment implements QuantityDialog.OnQuanti
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-        View view = inflater.inflate(R.layout.fragment_product, container, false);
-        bindViews(view);
-        orderProduct = new CartItem();
-        return view;
-
+        return inflater.inflate(R.layout.fragment_product, container, false);
     }
 
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
-        Long productId;
-        if (getArguments() != null) {
-            productId = ProductFragmentArgs.fromBundle(getArguments()).getProductId();
-        } else {
-            return;
-        }
+
+        bindViews(view);
+        setHasOptionsMenu(true);
+        orderProduct = new CartItem();
+
+        if (getArguments() == null)
+         return;
+
+        Long productId = ProductFragmentArgs.fromBundle(getArguments()).getProductId();
 
         Call<Product> call = getApiService().getProduct(productId);
         call.enqueue(new Callback<Product>() {
             @Override
-            public void onResponse(Call<Product> call, Response<Product> response) {
+            public void onResponse(@NotNull Call<Product> call, @NotNull Response<Product> response) {
                 if (!response.isSuccessful()) {
                     Log.d(TAG, "Algo falló");
                     return;
@@ -87,6 +89,27 @@ public class ProductFragment extends Fragment implements QuantityDialog.OnQuanti
             public void onFailure(Call<Product> call, Throwable t) {
             }
         });
+    }
+
+    @Override
+    public void onCreateOptionsMenu(@NonNull Menu menu, @NonNull MenuInflater inflater) {
+        super.onCreateOptionsMenu(menu, inflater);
+        menu.clear();
+        inflater.inflate(R.menu.product_menu, menu);
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(@NonNull MenuItem item) {
+        if (item.getItemId() == R.id.nav_search) {
+            navigateWithAction(ProductFragmentDirections.actionNavProductToNavSearch());
+        } else if (item.getItemId() == R.id.nav_cart) {
+            if (isUserLoggedIn()){
+                navigateWithAction(ProductFragmentDirections.actionNavProductToNavCart());
+            } else {
+                navigateWithAction(ProductFragmentDirections.actionNavProductToNavLogin());
+            }
+        }
+        return super.onOptionsItemSelected(item);
     }
 
     @Override
@@ -110,10 +133,14 @@ public class ProductFragment extends Fragment implements QuantityDialog.OnQuanti
         btnAddToWishList = view.findViewById(R.id.btn_add_to_wish_list);
 
         btnBuyNow.setOnClickListener(v -> {
-            Intent intent = new Intent(getActivity(), CheckoutActivity.class);
-            intent.putExtra("productId", orderProduct.getProduct().getId());
-            intent.putExtra("quantity", orderProduct.getQuantity());
-            startActivity(intent);
+            if (isUserLoggedIn()){
+                Intent intent = new Intent(getActivity(), CheckoutActivity.class);
+                intent.putExtra("productId", orderProduct.getProduct().getId());
+                intent.putExtra("quantity", orderProduct.getQuantity());
+                startActivity(intent);
+            } else {
+             navigateWithAction(ProductFragmentDirections.actionNavProductToNavLogin());
+            }
         });
 
         btnQuantity.setText("1");
@@ -124,23 +151,27 @@ public class ProductFragment extends Fragment implements QuantityDialog.OnQuanti
         });
 
         btnAddToCart.setOnClickListener(v -> {
-            //TODO
-            Call<CartItem> call = getApiService().addItemToCart(getUserId(view), orderProduct);
-            call.enqueue(new Callback<CartItem>() {
-                @Override
-                public void onResponse(Call<CartItem> call, Response<CartItem> response) {
-                    if (!response.isSuccessful()){ Log.d(TAG, "onResponse: Algo falló" );
-                    }
-                }
 
-                @Override
-                public void onFailure(Call<CartItem> call, Throwable t) { t.printStackTrace(); }
-            });
+            if (isUserLoggedIn()){
+                Call<CartItem> call = getApiService().addItemToCart(getUserIdFromPreferences(), orderProduct);
+                call.enqueue(new Callback<CartItem>() {
+                    @Override
+                    public void onResponse(Call<CartItem> call, Response<CartItem> response) {
+                        if (!response.isSuccessful()){ Log.d(TAG, "onResponse: Algo falló" );
+                        }
+                    }
+
+                    @Override
+                    public void onFailure(Call<CartItem> call, Throwable t) { t.printStackTrace(); }
+                });
+            } else {
+                navigateWithAction(ProductFragmentDirections.actionNavProductToNavLogin());
+            }
         });
 
         btnAddToWishList.setOnClickListener(v -> {
 
-            ApiRegisteredUser user = new ApiRegisteredUser(getUserId(view));
+            ApiRegisteredUser user = new ApiRegisteredUser(getUserIdFromPreferences());
 
             ApiProduct thisProduct = new ApiProduct(orderProduct.getProduct().getId());
 
@@ -174,8 +205,16 @@ public class ProductFragment extends Fragment implements QuantityDialog.OnQuanti
         Picasso.get().load(Uri.parse(product.getImageUrl())).into(ivProduct);
     }
 
-    private Long getUserId(View view){
-        SharedPreferences preferences = view.getContext().getSharedPreferences("credentials", Context.MODE_PRIVATE);
-        return  preferences.getLong("userId", 0);
+    private boolean isUserLoggedIn() {
+        return getUserIdFromPreferences() != 0;
+    }
+
+    private Long getUserIdFromPreferences() {
+        SharedPreferences preferences = getContext().getSharedPreferences("credentials", Context.MODE_PRIVATE);
+        return preferences.getLong("userId", 0);
+    }
+
+    private void navigateWithAction(NavDirections action){
+        Navigation.findNavController(getView()).navigate(action);
     }
 }

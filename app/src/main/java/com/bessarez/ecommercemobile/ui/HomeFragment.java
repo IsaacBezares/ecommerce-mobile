@@ -1,6 +1,7 @@
 package com.bessarez.ecommercemobile.ui;
 
 import android.content.Context;
+import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -11,6 +12,7 @@ import android.view.View;
 import android.view.ViewGroup;
 
 import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 import androidx.navigation.NavDirections;
 import androidx.navigation.Navigation;
@@ -45,25 +47,20 @@ public class HomeFragment extends Fragment implements OnItemClickListener {
     CardProductAdapter cardProductAdapter;
     Context mContext;
 
-
-    /*@Override
-    public void onActivityCreated(@Nullable Bundle savedInstanceState) {
-        super.onActivityCreated(savedInstanceState);
-        ActionBar actionBar = ((MainActivity) getActivity()).getSupportActionBar();
-        actionBar.setDisplayShowTitleEnabled(false);
-    }*/
-
     public View onCreateView(@NonNull LayoutInflater inflater,
                              ViewGroup container, Bundle savedInstanceState) {
-        View view = inflater.inflate(R.layout.fragment_home, container, false);
+        return inflater.inflate(R.layout.fragment_home, container, false);
+    }
+
+    @Override
+    public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
+        super.onViewCreated(view, savedInstanceState);
         mContext = view.getContext();
 
         setHasOptionsMenu(true);
 
         loadSlider(view);
         loadRecycler(view);
-
-        return view;
     }
 
     @Override
@@ -71,6 +68,20 @@ public class HomeFragment extends Fragment implements OnItemClickListener {
         super.onCreateOptionsMenu(menu, inflater);
         menu.clear();
         inflater.inflate(R.menu.home_menu, menu);
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(@NonNull MenuItem item) {
+        if (item.getItemId() == R.id.nav_search) {
+            navigateWithAction(HomeFragmentDirections.actionNavHomeToNavSearch());
+        } else if (item.getItemId() == R.id.nav_cart) {
+            if (isUserLoggedIn()){
+                navigateWithAction(HomeFragmentDirections.actionNavHomeToNavCart());
+            } else {
+                navigateWithAction(HomeFragmentDirections.actionNavHomeToNavLogin());
+            }
+        }
+        return super.onOptionsItemSelected(item);
     }
 
     private void loadRecycler(View view) {
@@ -143,19 +154,20 @@ public class HomeFragment extends Fragment implements OnItemClickListener {
     @Override
     public void onItemClick(View view, int position) {
         Long productId = products.get(position).getId();
-        HomeFragmentDirections.ActionNavHomeToProductFragment action = HomeFragmentDirections.actionNavHomeToProductFragment(productId);
+        HomeFragmentDirections.ActionNavHomeToNavProduct action = HomeFragmentDirections.actionNavHomeToNavProduct(productId);
         Navigation.findNavController(getView()).navigate(action);
     }
 
-    @Override
-    public boolean onOptionsItemSelected(@NonNull MenuItem item) {
-        if (item.getItemId() == R.id.nav_search){
-            NavDirections action = HomeFragmentDirections.actionNavHomeToSearchFragment();
-            Navigation.findNavController(getView()).navigate(action);
-        } else if (item.getItemId() == R.id.nav_cart){
-            NavDirections action = HomeFragmentDirections.actionNavHomeToCartFragment();
-            Navigation.findNavController(getView()).navigate(action);
-        }
-        return super.onOptionsItemSelected(item);
+    private boolean isUserLoggedIn() {
+        return getUserIdFromPreferences() != 0;
+    }
+
+    private Long getUserIdFromPreferences() {
+        SharedPreferences preferences = getContext().getSharedPreferences("credentials", Context.MODE_PRIVATE);
+        return preferences.getLong("userId", 0);
+    }
+
+    private void navigateWithAction(NavDirections action){
+        Navigation.findNavController(getView()).navigate(action);
     }
 }

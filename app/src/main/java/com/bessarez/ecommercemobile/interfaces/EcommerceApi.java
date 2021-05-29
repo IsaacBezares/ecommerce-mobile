@@ -35,6 +35,9 @@ import retrofit2.http.Path;
 
 public interface EcommerceApi {
 
+    @POST("/unidle")
+    Call<Void> unidle();
+
     @GET("/carousel_images")
     Call<ApiCarouselImages> getCarouselImages();
 

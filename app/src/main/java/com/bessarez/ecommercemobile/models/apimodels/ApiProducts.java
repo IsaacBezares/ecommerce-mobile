@@ -14,6 +14,10 @@ public class ApiProducts {
         return embedded.getProducts();
     }
 
+    public Service getEmbedded() {
+        return embedded;
+    }
+
     private class Service {
 
         @SerializedName("products")

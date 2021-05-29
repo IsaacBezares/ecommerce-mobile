@@ -49,12 +49,12 @@ import retrofit2.Response;
 import static android.content.ContentValues.TAG;
 import static com.bessarez.ecommercemobile.connector.ApiClient.getApiService;
 
-public class SearchFragment extends Fragment implements OnItemClickListener{
+public class SearchFragment extends Fragment implements OnItemClickListener {
 
-    List<SearchSuggestion> recentSearches;
-    List<SearchSuggestion> searchSuggestions;
-    SearchSuggestionAdapter searchSuggestionAdapter;
-    SearchView searchView;
+    private List<SearchSuggestion> recentSearches;
+    private List<SearchSuggestion> searchSuggestions;
+    private SearchSuggestionAdapter searchSuggestionAdapter;
+    private SearchView searchView;
 
     private CompositeDisposable disposables = new CompositeDisposable();
 
@@ -133,7 +133,7 @@ public class SearchFragment extends Fragment implements OnItemClickListener{
                                 Navigation.findNavController(getView()).navigate(action);
 
                                 if (isUserLoggedIn())
-                                    postRecentSearch(getUserIdFromPreferences(),query);
+                                    postRecentSearch(getUserIdFromPreferences(), query);
                                 return false;
                             }
 
@@ -237,7 +237,7 @@ public class SearchFragment extends Fragment implements OnItemClickListener{
         });
     }
 
-    private void postRecentSearch(Long userId, String query){
+    private void postRecentSearch(Long userId, String query) {
         RecentSearch recentSearch = new RecentSearch();
         recentSearch.setSearch(query);
         recentSearch.setRegisteredUser(new RegisteredUser(userId));
@@ -251,6 +251,7 @@ public class SearchFragment extends Fragment implements OnItemClickListener{
                     return;
                 }
             }
+
             @Override
             public void onFailure(Call<RecentSearch> call, Throwable t) {
                 Log.d(TAG, "onFailure: Algo pasó");

@@ -53,7 +53,7 @@ public class Signup1Fragment extends Fragment {
         AppCompatButton btnContinue = view.findViewById(R.id.btn_continue_signup);
         btnContinue.setOnClickListener(v -> {
 
-            if (isFormFulfilled()){
+            if (isFormFulfilled()) {
 
                 RegisteredUser newUser = new RegisteredUser();
                 newUser.setFirstName(etFirstName.getText().toString());
@@ -66,7 +66,7 @@ public class Signup1Fragment extends Fragment {
                 call.enqueue(new Callback<RegisteredUser>() {
                     @Override
                     public void onResponse(Call<RegisteredUser> call, Response<RegisteredUser> response) {
-                        if (!response.isSuccessful()){
+                        if (!response.isSuccessful()) {
                             Log.d(TAG, "onResponse: Algo falló");
                             return;
                         }
@@ -81,16 +81,16 @@ public class Signup1Fragment extends Fragment {
                     }
                 });
             } else {
-                CharSequence text =  "You must fill all fields";
-                Toast toast = Toast.makeText(getContext(),text,Toast.LENGTH_SHORT);
+                CharSequence text = "You must fill all fields";
+                Toast toast = Toast.makeText(getContext(), text, Toast.LENGTH_SHORT);
                 toast.show();
             }
 
         });
     }
 
-    private boolean isFormFulfilled(){
-        return ! (etFirstName.getText().toString().isEmpty() || etLastName.getText().toString().isEmpty()
+    private boolean isFormFulfilled() {
+        return !(etFirstName.getText().toString().isEmpty() || etLastName.getText().toString().isEmpty()
                 || etPhone.getText().toString().isEmpty() || etEmail.getText().toString().isEmpty()
                 || etPassword.getText().toString().isEmpty());
     }

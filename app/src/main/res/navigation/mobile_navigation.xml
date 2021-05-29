@@ -47,6 +47,9 @@
         <action
             android:id="@+id/action_nav_product_to_nav_search"
             app:destination="@id/nav_search" />
+        <action
+            android:id="@+id/action_nav_product_to_nav_wish_list"
+            app:destination="@id/nav_wish_list" />
     </fragment>
     <fragment
         android:id="@+id/nav_search"

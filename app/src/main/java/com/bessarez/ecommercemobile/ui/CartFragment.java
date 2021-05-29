@@ -8,6 +8,7 @@ import android.os.Bundle;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.widget.AppCompatButton;
+import androidx.core.widget.NestedScrollView;
 import androidx.fragment.app.Fragment;
 import androidx.navigation.NavDirections;
 import androidx.navigation.Navigation;
@@ -18,6 +19,8 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.RelativeLayout;
+import android.widget.ScrollView;
 import android.widget.TextView;
 
 import com.bessarez.ecommercemobile.CheckoutActivity;
@@ -46,6 +49,10 @@ public class CartFragment extends Fragment implements OnItemClickListener, Quant
 
     private TextView tvTotalPrice;
 
+    private RelativeLayout loadingScreen;
+    private RelativeLayout emptyScreen;
+    private NestedScrollView loadedScreen;
+
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
@@ -56,9 +63,13 @@ public class CartFragment extends Fragment implements OnItemClickListener, Quant
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
 
-        if (!isUserLoggedIn()){
+        if (!isUserLoggedIn()) {
             navigateWithAction(CartFragmentDirections.actionNavCartToNavLogin());
         }
+
+        loadingScreen = view.findViewById(R.id.loading_layout);
+        loadedScreen = view.findViewById(R.id.loaded_layout);
+        emptyScreen = view.findViewById(R.id.empty_layout);
 
         tvTotalPrice = view.findViewById(R.id.tv_total_price);
 
@@ -109,9 +120,16 @@ public class CartFragment extends Fragment implements OnItemClickListener, Quant
                         ))
                         .forEach(cartItems::add);
 
-                updateTotalPrice();
+                if (cartItems.size() > 0){
+                    updateTotalPrice();
+                    adapter.notifyDataSetChanged();
 
-                adapter.notifyDataSetChanged();
+                    loadingScreen.setVisibility(View.GONE);
+                    loadedScreen.setVisibility(View.VISIBLE);
+                } else {
+                    loadingScreen.setVisibility(View.GONE);
+                    emptyScreen.setVisibility(View.VISIBLE);
+                }
             }
 
             @Override
@@ -145,9 +163,15 @@ public class CartFragment extends Fragment implements OnItemClickListener, Quant
                         t.printStackTrace();
                     }
                 });
+
+                if (cartItems.size() <= 0){
+                    loadedScreen.setVisibility(View.GONE);
+                    emptyScreen.setVisibility(View.VISIBLE);
+                }
+
                 break;
             case R.id.btn_quantity:
-                QuantityDialog dialog = new QuantityDialog(cartItems.get(position).getStock(),position);
+                QuantityDialog dialog = new QuantityDialog(cartItems.get(position).getStock(), position);
                 dialog.setTargetFragment(this, 1);
                 dialog.show(getParentFragmentManager(), QuantityDialog.TAG);
                 break;
@@ -167,19 +191,23 @@ public class CartFragment extends Fragment implements OnItemClickListener, Quant
 
         updateTotalPrice();
 
-        Call<CartItem> call = getApiService().updateCartItemQuantity(item.getId(),quantity);
+        Call<CartItem> call = getApiService().updateCartItemQuantity(item.getId(), quantity);
         call.enqueue(new Callback<CartItem>() {
             @Override
             public void onResponse(Call<CartItem> call, Response<CartItem> response) {
-                if (!response.isSuccessful()){ Log.d(TAG, "onResponse: Algo falló"); }
+                if (!response.isSuccessful()) {
+                    Log.d(TAG, "onResponse: Algo falló");
+                }
             }
 
             @Override
-            public void onFailure(Call<CartItem> call, Throwable t) { t.printStackTrace(); }
+            public void onFailure(Call<CartItem> call, Throwable t) {
+                t.printStackTrace();
+            }
         });
     }
 
-    private void updateTotalPrice(){
+    private void updateTotalPrice() {
         double totalPrice = cartItems.stream()
                 .map(item -> item.getPrice() * item.getQuantity())
                 .reduce(0.0, Double::sum);
@@ -196,7 +224,7 @@ public class CartFragment extends Fragment implements OnItemClickListener, Quant
         return preferences.getLong("userId", 0);
     }
 
-    private void navigateWithAction(NavDirections action){
+    private void navigateWithAction(NavDirections action) {
         Navigation.findNavController(getView()).navigate(action);
     }
 }

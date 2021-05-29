@@ -184,6 +184,23 @@ public class CheckoutActivity extends AppCompatActivity {
                 .setTitle(title)
                 .setMessage(message);
         builder.setPositiveButton("Ok", null);
+
+        builder.create().show();
+    }
+
+    private void displayPaymentSucceededAlert(@NonNull String title,
+                                              @Nullable String message) {
+        AlertDialog.Builder builder = new AlertDialog.Builder(this)
+                .setTitle(title)
+                .setMessage(message);
+        builder.setPositiveButton("Ok", null);
+
+        builder.setOnDismissListener(dialog -> {
+            Intent intent = new Intent(this, MainActivity.class);
+            startActivity(intent);
+            finish();
+        });
+
         builder.create().show();
     }
 
@@ -289,7 +306,7 @@ public class CheckoutActivity extends AppCompatActivity {
                 if (activity.isCartCheckout)
                     activity.clearCart();
 
-                activity.displayAlert(
+                activity.displayPaymentSucceededAlert(
                         "Payment completed",
                         paymentIntent.toString()
                 );

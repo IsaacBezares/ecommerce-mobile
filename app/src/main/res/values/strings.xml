@@ -7,13 +7,15 @@
     <string name="create_one">Create one</string>
     <string name="don_t_have_an_account_yet">Don\'t have an account yet?</string>
     <string name="login">Login</string>
+    <string name="hello_login">Hello, Login :)</string>
+    <string name="hello_comma">Hello, </string>
     <string name="e_mail">E-mail</string>
     <string name="password">Password</string>
     <string name="write_down_your_credentials">Write down your credentials</string>
     <string name="account">Account</string>
     <string name="logout">Logout</string>
     <string name="settings">settings</string>
-    <string name="root_preferences">root preferences</string>
+    <string name="root_preferences" translatable="false">root preferences</string>
     <string name="buy_now">Buy Now</string>
     <string name="add_to_cart">Add to Cart</string>
     <string name="available_stock">Available stock: </string>
@@ -24,7 +26,7 @@
     <string name="description">Description</string>
     <string name="search_product">Search product</string>
     <string name="search">Search</string>
-    <string name="blank" />
+    <string name="blank" translatable="false" />
     <string name="products">Products</string>
     <string name="results">Results</string>
     <string name="ordered_at">Ordered at</string>
@@ -33,7 +35,7 @@
     <string name="your_items">Your Items</string>
     <string name="pay">Pay</string>
     <string name="payment_deatils">Payment Deatils</string>
-    <string name="money_sign">$</string>
+    <string name="money_sign" translatable="false">$</string>
     <string name="shopping_cart">Shopping Cart</string>
     <string name="proceed_to_checkout">Proceed to checkout</string>
     <string name="delete">Delete</string>
@@ -43,4 +45,15 @@
     <string name="complete_the_registration_form">Complete the registration form</string>
     <string name="Continue">Continue</string>
     <string name="your_orders">Your Orders</string>
+    <string name="loading">loading</string>
+    <string name="warning">Warning!</string>
+    <string name="warning_app_description">This is not a real Marketplace. \nAll listed items do not represent an actual physical product. \n\nFor testing purposes you can use the following account number as you won\'t be allowed to use a real card for payment method \n\n4242 4242 4242 4242</string>
+    <string name="got_it">Got it!</string>
+    <string name="loading_message">This can take up to a minute \nBack-end is free hosted and might be idle at the moment</string>
+    <string name="your_cart_is_empty">Your cart is empty</string>
+    <string name="browse_the_app">Browse the app to find new products!</string>
+    <string name="you_have_no_orders_yet">You have no orders yet</string>
+    <string name="you_have_no_products_on_your_wish_list">You have no products on your wish list</string>
+    <string name="we_couldn_t_found_any_products">We couldn\'t found any products</string>
+    <string name="try_checking_your_spelling">Try checking your spelling</string>
 </resources>

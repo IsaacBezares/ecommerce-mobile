@@ -10,9 +10,11 @@ import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ScrollView;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.constraintlayout.widget.ConstraintLayout;
 import androidx.fragment.app.Fragment;
 import androidx.navigation.NavDirections;
 import androidx.navigation.Navigation;
@@ -43,9 +45,11 @@ import static android.content.ContentValues.TAG;
 
 public class HomeFragment extends Fragment implements OnItemClickListener {
 
-    List<CardProduct> products;
-    CardProductAdapter cardProductAdapter;
-    Context mContext;
+    private List<CardProduct> products;
+    private CardProductAdapter cardProductAdapter;
+
+    private ConstraintLayout loadingScreen;
+    private ScrollView loadedScreen;
 
     public View onCreateView(@NonNull LayoutInflater inflater,
                              ViewGroup container, Bundle savedInstanceState) {
@@ -55,40 +59,13 @@ public class HomeFragment extends Fragment implements OnItemClickListener {
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
-        mContext = view.getContext();
-
         setHasOptionsMenu(true);
 
-        loadSlider(view);
-        loadRecycler(view);
-    }
+        loadingScreen = view.findViewById(R.id.loading_layout);
+        loadedScreen = view.findViewById(R.id.loaded_layout);
 
-    @Override
-    public void onCreateOptionsMenu(@NonNull Menu menu, @NonNull MenuInflater inflater) {
-        super.onCreateOptionsMenu(menu, inflater);
-        menu.clear();
-        inflater.inflate(R.menu.home_menu, menu);
-    }
-
-    @Override
-    public boolean onOptionsItemSelected(@NonNull MenuItem item) {
-        if (item.getItemId() == R.id.nav_search) {
-            navigateWithAction(HomeFragmentDirections.actionNavHomeToNavSearch());
-        } else if (item.getItemId() == R.id.nav_cart) {
-            if (isUserLoggedIn()){
-                navigateWithAction(HomeFragmentDirections.actionNavHomeToNavCart());
-            } else {
-                navigateWithAction(HomeFragmentDirections.actionNavHomeToNavLogin());
-            }
-        }
-        return super.onOptionsItemSelected(item);
-    }
-
-    private void loadRecycler(View view) {
         products = new ArrayList<>();
-        RecyclerView recyclerView = view.findViewById(R.id.rv_products);
-        recyclerView.setNestedScrollingEnabled(false);
-        recyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
+        cardProductAdapter = new CardProductAdapter(products, getContext(), this);
 
         Call<ApiProducts> call = getApiService().getProducts();
         call.enqueue(new Callback<ApiProducts>() {
@@ -109,6 +86,9 @@ public class HomeFragment extends Fragment implements OnItemClickListener {
                             String.valueOf(product.getPrice() / 100.0)
                     ));
                     cardProductAdapter.notifyDataSetChanged();
+
+                    loadingScreen.setVisibility(View.GONE);
+                    loadedScreen.setVisibility(View.VISIBLE);
                 }
             }
 
@@ -118,7 +98,36 @@ public class HomeFragment extends Fragment implements OnItemClickListener {
             }
         });
 
-        cardProductAdapter = new CardProductAdapter(products, getContext(), this);
+        loadSlider(view);
+        loadRecycler(view);
+    }
+
+    @Override
+    public void onCreateOptionsMenu(@NonNull Menu menu, @NonNull MenuInflater inflater) {
+        super.onCreateOptionsMenu(menu, inflater);
+        menu.clear();
+        inflater.inflate(R.menu.home_menu, menu);
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(@NonNull MenuItem item) {
+        if (item.getItemId() == R.id.nav_search) {
+            navigateWithAction(HomeFragmentDirections.actionNavHomeToNavSearch());
+        } else if (item.getItemId() == R.id.nav_cart) {
+            if (isUserLoggedIn()) {
+                navigateWithAction(HomeFragmentDirections.actionNavHomeToNavCart());
+            } else {
+                navigateWithAction(HomeFragmentDirections.actionNavHomeToNavLogin());
+            }
+        }
+        return super.onOptionsItemSelected(item);
+    }
+
+    private void loadRecycler(View view) {
+
+        RecyclerView recyclerView = view.findViewById(R.id.rv_products);
+        recyclerView.setNestedScrollingEnabled(false);
+        recyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
         recyclerView.setAdapter(cardProductAdapter);
     }
 
@@ -167,7 +176,7 @@ public class HomeFragment extends Fragment implements OnItemClickListener {
         return preferences.getLong("userId", 0);
     }
 
-    private void navigateWithAction(NavDirections action){
+    private void navigateWithAction(NavDirections action) {
         Navigation.findNavController(getView()).navigate(action);
     }
 }

@@ -18,7 +18,7 @@ public class SettingsFragment extends PreferenceFragmentCompat {
         SharedPreferences preferences = getActivity().getSharedPreferences("credentials", Context.MODE_PRIVATE);
         String email = preferences.getString("email", "default");
 
-        if (email.equals("default")){
+        if (email.equals("default")) {
             setPreferencesFromResource(R.xml.logged_out_preferences, rootKey);
         } else {
             setPreferencesFromResource(R.xml.logged_in_preferences, rootKey);

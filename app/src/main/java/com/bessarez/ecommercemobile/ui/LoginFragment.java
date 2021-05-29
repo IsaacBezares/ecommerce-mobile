@@ -52,7 +52,7 @@ public class LoginFragment extends Fragment {
         etPassword = view.findViewById(R.id.etPasswordLogin);
         TextView tvCreateAccount = view.findViewById(R.id.tvCreateAccount);
 
-        btnLogin.setOnClickListener(v ->  login(etEmail.getText().toString(), etPassword.getText().toString()));
+        btnLogin.setOnClickListener(v -> login(etEmail.getText().toString(), etPassword.getText().toString()));
 
         tvCreateAccount.setOnClickListener(v -> {
             NavDirections action = LoginFragmentDirections.actionNavLoginToNavSignup1();
@@ -91,7 +91,7 @@ public class LoginFragment extends Fragment {
         });
     }
 
-    private void login(String email, String password){
+    private void login(String email, String password) {
         Call<ApiToken> call = getApiService().login(new ApiLogin(email, password));
         call.enqueue(new Callback<ApiToken>() {
             @Override
@@ -104,8 +104,8 @@ public class LoginFragment extends Fragment {
                         saveUserData(token, email);
                     }
                 } else {
-                    CharSequence text =  "Inavlid credentials";
-                    Toast toast = Toast.makeText(getContext().getApplicationContext(),text,Toast.LENGTH_SHORT);
+                    CharSequence text = "Inavlid credentials";
+                    Toast toast = Toast.makeText(getContext().getApplicationContext(), text, Toast.LENGTH_SHORT);
                     toast.show();
                 }
             }
@@ -118,8 +118,9 @@ public class LoginFragment extends Fragment {
         });
     }
 
-    private void reloadActivity(){
+    private void reloadActivity() {
         Intent intent = new Intent(getActivity(), MainActivity.class);
         startActivity(intent);
+        getActivity().finish();
     }
 }

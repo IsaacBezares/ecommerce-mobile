@@ -24,6 +24,8 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
     private AppBarConfiguration mAppBarConfiguration;
 
+
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -71,17 +73,12 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
         if (isLogged) {
             String firstName = preferences.getString("firstName", "default");
-            usernameOrLogin.setText("Hello, " + firstName);
+            usernameOrLogin.setText(getString(R.string.hello_comma) + firstName);
         } else {
             usernameOrLogin.setOnClickListener(this);
-            usernameOrLogin.setText("Hello, Log in :)");
+            usernameOrLogin.setText(getString(R.string.hello_login));
         }
     }
-
-/*    @Override
-    public boolean onSearchRequested() {
-        return true;
-    }*/
 
     @Override
     public void onClick(View v) {

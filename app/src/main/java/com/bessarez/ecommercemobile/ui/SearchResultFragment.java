@@ -13,6 +13,8 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.RelativeLayout;
+import android.widget.ScrollView;
 
 import com.bessarez.ecommercemobile.R;
 import com.bessarez.ecommercemobile.interfaces.OnItemClickListener;
@@ -31,13 +33,12 @@ import static com.bessarez.ecommercemobile.connector.ApiClient.getApiService;
 
 public class SearchResultFragment extends Fragment implements OnItemClickListener {
 
-    ArrayList<CardProduct> resultProducts;
-    CardProductAdapter cardProductAdapter;
+    private ArrayList<CardProduct> resultProducts;
+    private CardProductAdapter cardProductAdapter;
 
-    @Override
-    public void onCreate(@Nullable Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-    }
+    private RelativeLayout loadingScreen;
+    private RelativeLayout emptyScreen;
+    private ScrollView loadedScreen;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -48,6 +49,10 @@ public class SearchResultFragment extends Fragment implements OnItemClickListene
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
+
+        loadingScreen = view.findViewById(R.id.loading_layout);
+        loadedScreen = view.findViewById(R.id.loaded_layout);
+        emptyScreen = view.findViewById(R.id.empty_layout);
 
         resultProducts = new ArrayList<>();
         cardProductAdapter = new CardProductAdapter(resultProducts, getContext(), this);
@@ -70,16 +75,26 @@ public class SearchResultFragment extends Fragment implements OnItemClickListene
 
                 ApiProducts apiProducts = response.body();
 
-                for (com.bessarez.ecommercemobile.models.Product product : apiProducts.getEmbeddedServices()) {
-                    resultProducts.add(new CardProduct(
-                            product.getId(),
-                            product.getImageUrl(),
-                            product.getName(),
-                            String.valueOf(product.getPrice() / 100.0)
-                    ));
+                if (apiProducts.getEmbedded() == null) {
+                    loadingScreen.setVisibility(View.GONE);
+                    emptyScreen.setVisibility(View.VISIBLE);
                 }
 
-                cardProductAdapter.notifyDataSetChanged();
+                if (apiProducts.getEmbedded() != null) {
+                    for (com.bessarez.ecommercemobile.models.Product product : apiProducts.getEmbeddedServices()) {
+                        resultProducts.add(new CardProduct(
+                                product.getId(),
+                                product.getImageUrl(),
+                                product.getName(),
+                                String.valueOf(product.getPrice() / 100.0)
+                        ));
+                    }
+
+                    cardProductAdapter.notifyDataSetChanged();
+
+                    loadingScreen.setVisibility(View.GONE);
+                    loadedScreen.setVisibility(View.VISIBLE);
+                }
             }
 
             @Override

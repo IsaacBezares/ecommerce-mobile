@@ -7,9 +7,11 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.RelativeLayout;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.core.widget.NestedScrollView;
 import androidx.fragment.app.Fragment;
 import androidx.navigation.NavDirections;
 import androidx.navigation.Navigation;
@@ -43,6 +45,10 @@ public class OrdersFragment extends Fragment implements OnItemClickListener {
 
     private OrderAdapter orderAdapter;
 
+    private RelativeLayout loadingScreen;
+    private RelativeLayout emptyScreen;
+    private NestedScrollView loadedScreen;
+
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -50,15 +56,20 @@ public class OrdersFragment extends Fragment implements OnItemClickListener {
 
     public View onCreateView(@NonNull LayoutInflater inflater,
                              ViewGroup container, Bundle savedInstanceState) {
-        return  inflater.inflate(R.layout.fragment_orders, container, false);
+        return inflater.inflate(R.layout.fragment_orders, container, false);
     }
 
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
-        if (!isUserLoggedIn()){
+        if (!isUserLoggedIn()) {
             navigateWithAction(OrdersFragmentDirections.actionNavOrdersToNavLogin());
         }
+
+        loadingScreen = view.findViewById(R.id.loading_layout);
+        loadedScreen = view.findViewById(R.id.loaded_layout);
+        emptyScreen = view.findViewById(R.id.empty_layout);
+
         fillOrderList();
         loadRecycler(view);
     }
@@ -78,20 +89,22 @@ public class OrdersFragment extends Fragment implements OnItemClickListener {
 
         if (userId == 0) return;
 
-        orderAdapter =  new OrderAdapter(getContext(), consolidatedList, this);
+        orderAdapter = new OrderAdapter(getContext(), consolidatedList, this);
 
         Call<ApiUserOrders> userOrders = getApiService().getUserOrders(userId);
         userOrders.enqueue(new Callback<ApiUserOrders>() {
             @Override
             public void onResponse(Call<ApiUserOrders> call, Response<ApiUserOrders> response) {
-                if (! response.isSuccessful()){
+                if (!response.isSuccessful()) {
                     Log.d(TAG, "Algo falló");
                     return;
                 }
 
                 ApiUserOrders apiUserOrders = response.body();
 
-                if (apiUserOrders.getEmbedded() == null){
+                if (apiUserOrders.getEmbedded() == null) {
+                    loadingScreen.setVisibility(View.GONE);
+                    emptyScreen.setVisibility(View.VISIBLE);
                     return;
                 }
 
@@ -99,12 +112,12 @@ public class OrdersFragment extends Fragment implements OnItemClickListener {
                     long orderId = order.getId();
                     LocalDate orderedAt = order.getOrderedAt();
                     double totalAmount = order.getOrderProducts().stream()
-                            .map(this :: calcIndividualAmountDouble)
-                            .reduce(0.0, Double :: sum);
+                            .map(this::calcIndividualAmountDouble)
+                            .reduce(0.0, Double::sum);
 
                     consolidatedList.add(new CardOrder(orderId, orderedAt, totalAmount));
 
-                    for (OrderProduct orderProduct : order.getOrderProducts()){
+                    for (OrderProduct orderProduct : order.getOrderProducts()) {
                         long productId = orderProduct.getProduct().getId();
                         String imageUrl = orderProduct.getProduct().getImageUrl();
                         String name = orderProduct.getProduct().getName();
@@ -115,6 +128,9 @@ public class OrdersFragment extends Fragment implements OnItemClickListener {
                 }
 
                 orderAdapter.notifyDataSetChanged();
+
+                loadingScreen.setVisibility(View.GONE);
+                loadedScreen.setVisibility(View.VISIBLE);
             }
 
             private double calcIndividualAmountDouble(OrderProduct orderProduct) {
@@ -145,7 +161,7 @@ public class OrdersFragment extends Fragment implements OnItemClickListener {
         return preferences.getLong("userId", 0);
     }
 
-    private void navigateWithAction(NavDirections action){
+    private void navigateWithAction(NavDirections action) {
         Navigation.findNavController(getView()).navigate(action);
     }
 }

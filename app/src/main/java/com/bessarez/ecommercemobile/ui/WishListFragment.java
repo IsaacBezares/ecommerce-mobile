@@ -7,6 +7,8 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.RelativeLayout;
+import android.widget.ScrollView;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -35,8 +37,12 @@ import static com.bessarez.ecommercemobile.connector.ApiClient.getApiService;
 
 public class WishListFragment extends Fragment implements OnItemClickListener {
 
-    List<CardProduct> products;
-    CardProductAdapter cardProductAdapter;
+    private List<CardProduct> products;
+    private CardProductAdapter cardProductAdapter;
+
+    private RelativeLayout loadingScreen;
+    private RelativeLayout emptyScreen;
+    private ScrollView loadedScreen;
 
     public View onCreateView(@NonNull LayoutInflater inflater,
                              ViewGroup container, Bundle savedInstanceState) {
@@ -46,23 +52,18 @@ public class WishListFragment extends Fragment implements OnItemClickListener {
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
-        if (!isUserLoggedIn()){
+        if (!isUserLoggedIn()) {
             navigateWithAction(WishListFragmentDirections.actionNavWishListToNavLogin());
         }
-        loadRecycler(view);
-    }
 
-    private void loadRecycler(View view) {
-        SharedPreferences preferences = view.getContext().getSharedPreferences("credentials", Context.MODE_PRIVATE);
-        Long userId = preferences.getLong("userId", 0);
+        loadingScreen = view.findViewById(R.id.loading_layout);
+        loadedScreen = view.findViewById(R.id.loaded_layout);
+        emptyScreen = view.findViewById(R.id.empty_layout);
 
         products = new ArrayList<>();
+        cardProductAdapter = new CardProductAdapter(products, getContext(), this::onItemClick);
 
-        RecyclerView recyclerView = view.findViewById(R.id.rv_wish_list_products);
-        recyclerView.setNestedScrollingEnabled(false);
-        recyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
-
-        Call<ApiWishProducts> call = getApiService().getWishListProducts(userId);
+        Call<ApiWishProducts> call = getApiService().getWishListProducts(getUserIdFromPreferences());
         call.enqueue(new Callback<ApiWishProducts>() {
             @Override
             public void onResponse(Call<ApiWishProducts> call, Response<ApiWishProducts> response) {
@@ -73,7 +74,11 @@ public class WishListFragment extends Fragment implements OnItemClickListener {
 
                 ApiWishProducts apiProducts = response.body();
 
-                if (apiProducts.getEmbedded() == null) return;
+                if (apiProducts.getEmbedded() == null) {
+                    loadingScreen.setVisibility(View.GONE);
+                    emptyScreen.setVisibility(View.VISIBLE);
+                    return;
+                }
 
                 for (ApiProduct product : apiProducts.getEmbeddedServices()) {
                     products.add(new CardProduct(
@@ -84,6 +89,9 @@ public class WishListFragment extends Fragment implements OnItemClickListener {
                     ));
                     cardProductAdapter.notifyDataSetChanged();
                 }
+
+                loadingScreen.setVisibility(View.GONE);
+                loadedScreen.setVisibility(View.VISIBLE);
             }
 
             @Override
@@ -92,7 +100,13 @@ public class WishListFragment extends Fragment implements OnItemClickListener {
             }
         });
 
-        cardProductAdapter = new CardProductAdapter(products, getContext(), this::onItemClick);
+        loadRecycler(view);
+    }
+
+    private void loadRecycler(View view) {
+        RecyclerView recyclerView = view.findViewById(R.id.rv_wish_list_products);
+        recyclerView.setNestedScrollingEnabled(false);
+        recyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
         recyclerView.setAdapter(cardProductAdapter);
     }
 
@@ -112,7 +126,7 @@ public class WishListFragment extends Fragment implements OnItemClickListener {
         return preferences.getLong("userId", 0);
     }
 
-    private void navigateWithAction(NavDirections action){
+    private void navigateWithAction(NavDirections action) {
         Navigation.findNavController(getView()).navigate(action);
     }
 }

@@ -115,6 +115,7 @@ public class ProductFragment extends Fragment implements QuantityDialog.OnQuanti
         super.onResume();
         if (isDataLoaded){
             setScreenVisibility(false,true);
+            updateViewsData();
         }
     }
 

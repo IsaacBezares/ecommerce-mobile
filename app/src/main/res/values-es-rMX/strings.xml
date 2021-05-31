@@ -54,4 +54,6 @@
     <string name="try_checking_your_spelling">Revisa esté bien escrito</string>
     <string name="loading_message">Esto puede tardar hasta un minuto \nEl back-end está alojado de forma gratuita y podría estar inactivo en este momento</string>
     <string name="warning_app_description">Esta no es una tienda real. \nTodos los elementos enumerados no representan un producto físico real. \n\nPara realizar pruebas, puede utilizar el siguiente número de cuenta, ya que no podrá utilizar una tarjeta real como método de pago \n\n4242 4242 4242 4242</string>
+    <string name="welcome">Bienvenido!</string>
+    <string name="recently_viewed_products">Productos vistos recientemente</string>
 </resources>

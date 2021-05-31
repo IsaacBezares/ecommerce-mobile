@@ -14,16 +14,16 @@ public class ApiWishProducts {
         return embedded;
     }
 
-    public List<ApiProduct> getEmbeddedServices() {
+    public List<Product> getEmbeddedServices() {
         return embedded.getWishProducts();
     }
 
     private class Service {
 
         @SerializedName("products")
-        private List<ApiProduct> wishProductList = new ArrayList<>();
+        private List<Product> wishProductList = new ArrayList<>();
 
-        public List<ApiProduct> getWishProducts() {
+        public List<Product> getWishProducts() {
             return wishProductList;
         }
 

@@ -22,10 +22,9 @@ import android.view.ViewGroup;
 
 import com.bessarez.ecommercemobile.R;
 import com.bessarez.ecommercemobile.interfaces.OnItemClickListener;
+import com.bessarez.ecommercemobile.models.Product;
 import com.bessarez.ecommercemobile.models.RecentSearch;
 import com.bessarez.ecommercemobile.models.RegisteredUser;
-import com.bessarez.ecommercemobile.models.apimodels.ApiRecentSearch;
-import com.bessarez.ecommercemobile.models.apimodels.ApiSuggestedProduct;
 import com.bessarez.ecommercemobile.models.apimodels.ApiSuggestedProducts;
 import com.bessarez.ecommercemobile.models.apimodels.ApiRecentSearches;
 import com.bessarez.ecommercemobile.ui.adapters.SearchSuggestionAdapter;
@@ -190,7 +189,7 @@ public class SearchFragment extends Fragment implements OnItemClickListener {
                 searchSuggestions.clear();
                 ApiSuggestedProducts suggestedProducts = response.body();
                 if ((suggestedProducts.getEmbeddedServices() != null)) {
-                    for (ApiSuggestedProduct suggestedProduct : suggestedProducts.getSuggestionList()) {
+                    for (Product suggestedProduct : suggestedProducts.getSuggestionList()) {
                         searchSuggestions.add(new SearchSuggestion(suggestedProduct.getId(), suggestedProduct.getName(), 2));
                         searchSuggestionAdapter.notifyDataSetChanged();
                     }
@@ -222,8 +221,8 @@ public class SearchFragment extends Fragment implements OnItemClickListener {
                     return;
                 }
 
-                for (ApiRecentSearch search : apiRecentSearches.getRecentSearchList()) {
-                    recentSearches.add(new SearchSuggestion(null, search.getName(), 1));
+                for (RecentSearch search : apiRecentSearches.getRecentSearchList()) {
+                    recentSearches.add(new SearchSuggestion(null, search.getSearch(), 1));
                 }
                 searchSuggestions.addAll(recentSearches);
                 searchSuggestionAdapter.notifyDataSetChanged();

@@ -9,6 +9,7 @@ import android.os.Bundle;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.widget.AppCompatButton;
+import androidx.core.widget.NestedScrollView;
 import androidx.fragment.app.Fragment;
 import androidx.navigation.NavDirections;
 import androidx.navigation.Navigation;
@@ -22,16 +23,15 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.RelativeLayout;
-import android.widget.ScrollView;
 import android.widget.TextView;
 
 import com.bessarez.ecommercemobile.CheckoutActivity;
 import com.bessarez.ecommercemobile.R;
 import com.bessarez.ecommercemobile.models.CartItem;
 import com.bessarez.ecommercemobile.models.Product;
-import com.bessarez.ecommercemobile.models.apimodels.ApiRegisteredUser;
-import com.bessarez.ecommercemobile.models.apimodels.ApiWishProduct;
-import com.bessarez.ecommercemobile.models.apimodels.ApiProduct;
+import com.bessarez.ecommercemobile.models.RegisteredUser;
+import com.bessarez.ecommercemobile.models.UserViewedProduct;
+import com.bessarez.ecommercemobile.models.WishProduct;
 import com.bessarez.ecommercemobile.ui.dialogs.QuantityDialog;
 import com.squareup.picasso.Picasso;
 
@@ -51,9 +51,30 @@ public class ProductFragment extends Fragment implements QuantityDialog.OnQuanti
     private AppCompatButton btnQuantity, btnBuyNow, btnAddToCart, btnAddToWishList;
 
     private RelativeLayout loadingScreen;
-    private ScrollView productLayout;
+    private NestedScrollView loadedScreen;
 
     private CartItem orderProduct;
+
+    private boolean isDataLoaded;
+
+    @Override
+    public void onCreate(@Nullable Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+
+        if (getArguments() == null)
+            return;
+
+        isDataLoaded = false;
+
+        orderProduct = new CartItem();
+
+        Long productId = ProductFragmentArgs.fromBundle(getArguments()).getProductId();
+        Long userId = getUserIdFromPreferences();
+
+        if (userId != 0) addToRecentlyViewedProducts(userId, productId);
+
+        getProduct(productId);
+    }
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -66,34 +87,6 @@ public class ProductFragment extends Fragment implements QuantityDialog.OnQuanti
         super.onViewCreated(view, savedInstanceState);
         bindViews(view);
         setHasOptionsMenu(true);
-
-        orderProduct = new CartItem();
-
-        if (getArguments() == null)
-            return;
-
-        Long productId = ProductFragmentArgs.fromBundle(getArguments()).getProductId();
-
-        Call<Product> call = getApiService().getProduct(productId);
-        call.enqueue(new Callback<Product>() {
-            @Override
-            public void onResponse(@NotNull Call<Product> call, @NotNull Response<Product> response) {
-                if (!response.isSuccessful()) {
-                    Log.d(TAG, "Algo falló");
-                    return;
-                }
-
-                Product product = response.body();
-                orderProduct.setProduct(product);
-                orderProduct.setQuantity(1);
-                updateViewsData(product);
-
-            }
-
-            @Override
-            public void onFailure(Call<Product> call, Throwable t) {
-            }
-        });
     }
 
     @Override
@@ -118,17 +111,64 @@ public class ProductFragment extends Fragment implements QuantityDialog.OnQuanti
     }
 
     @Override
-    public void sendQuantity(Integer quantity, Integer position) {
-        orderProduct.setQuantity(quantity);
-        btnQuantity.setText(String.valueOf(quantity));
+    public void onResume() {
+        super.onResume();
+        if (isDataLoaded){
+            setScreenVisibility(false,true);
+        }
     }
 
-    //Methods for readability
+    private void addToRecentlyViewedProducts(Long userId, Long productId) {
+
+        UserViewedProduct userViewedProduct =
+                new UserViewedProduct(new RegisteredUser(userId), new Product(productId));
+
+        Call<UserViewedProduct> call = getApiService().addRecentlyViewedProduct(userViewedProduct);
+        call.enqueue(new Callback<UserViewedProduct>() {
+            @Override
+            public void onResponse(Call<UserViewedProduct> call, Response<UserViewedProduct> response) {
+                if (!response.isSuccessful()) {
+                    Log.d(TAG, "onResponse: Algo falló");
+                }
+            }
+
+            @Override
+            public void onFailure(Call<UserViewedProduct> call, Throwable t) {
+                t.printStackTrace();
+            }
+        });
+    }
+
+    private void getProduct(Long productId) {
+        Call<Product> call = getApiService().getProduct(productId);
+        call.enqueue(new Callback<Product>() {
+            @Override
+            public void onResponse(@NotNull Call<Product> call, @NotNull Response<Product> response) {
+                if (!response.isSuccessful()) {
+                    Log.d(TAG, "Algo falló");
+                    return;
+                }
+
+                Product product = response.body();
+                orderProduct.setProduct(product);
+                orderProduct.setQuantity(1);
+                updateViewsData();
+
+                isDataLoaded = true;
+
+                setScreenVisibility(false,true);
+            }
+
+            @Override
+            public void onFailure(Call<Product> call, Throwable t) {
+            }
+        });
+    }
 
     private void bindViews(View view) {
 
         loadingScreen = view.findViewById(R.id.loading_layout);
-        productLayout = view.findViewById(R.id.loaded_layout);
+        loadedScreen = view.findViewById(R.id.loaded_layout);
 
         tvProductTitle = view.findViewById(R.id.tv_product_title);
         tvProductPrice = view.findViewById(R.id.tv_product_price);
@@ -185,14 +225,14 @@ public class ProductFragment extends Fragment implements QuantityDialog.OnQuanti
 
         btnAddToWishList.setOnClickListener(v -> {
 
-            ApiRegisteredUser user = new ApiRegisteredUser(getUserIdFromPreferences());
+            RegisteredUser user = new RegisteredUser(getUserIdFromPreferences());
 
-            ApiProduct thisProduct = new ApiProduct(orderProduct.getProduct().getId());
+            Product thisProduct = new Product(orderProduct.getProduct().getId());
 
-            Call<ApiWishProduct> call = getApiService().addProductToWishList(new ApiWishProduct(user, thisProduct));
-            call.enqueue(new Callback<ApiWishProduct>() {
+            Call<Product> call = getApiService().addProductToWishList(new WishProduct(user, thisProduct));
+            call.enqueue(new Callback<Product>() {
                 @Override
-                public void onResponse(Call<ApiWishProduct> call, Response<ApiWishProduct> response) {
+                public void onResponse(Call<Product> call, Response<Product> response) {
                     navigateWithAction(ProductFragmentDirections.actionNavProductToNavWishList());
                     if (!response.isSuccessful()) {
                         Log.d(TAG, "Algo falló");
@@ -201,7 +241,7 @@ public class ProductFragment extends Fragment implements QuantityDialog.OnQuanti
                 }
 
                 @Override
-                public void onFailure(Call<ApiWishProduct> call, Throwable t) {
+                public void onFailure(Call<Product> call, Throwable t) {
                     navigateWithAction(ProductFragmentDirections.actionNavProductToNavWishList());
                     System.out.println("Algo falló");
                     t.printStackTrace();
@@ -210,7 +250,9 @@ public class ProductFragment extends Fragment implements QuantityDialog.OnQuanti
         });
     }
 
-    private void updateViewsData(Product product) {
+    private void updateViewsData() {
+        Product product = orderProduct.getProduct();
+
         tvProductTitle.setText(product.getName());
         tvProductPrice.setText("$" + product.getPrice() / 100.0);
         tvProductDescription.setText(product.getLongDesc());
@@ -218,9 +260,12 @@ public class ProductFragment extends Fragment implements QuantityDialog.OnQuanti
         tvProductStock.setText(availableStock + " " + product.getStock());
 
         Picasso.get().load(Uri.parse(product.getImageUrl())).into(ivProduct);
+    }
 
-        loadingScreen.setVisibility(View.GONE);
-        productLayout.setVisibility(View.VISIBLE);
+    @Override
+    public void sendQuantity(Integer quantity, Integer position) {
+        orderProduct.setQuantity(quantity);
+        btnQuantity.setText(String.valueOf(quantity));
     }
 
     private boolean isUserLoggedIn() {
@@ -234,5 +279,17 @@ public class ProductFragment extends Fragment implements QuantityDialog.OnQuanti
 
     private void navigateWithAction(NavDirections action) {
         Navigation.findNavController(getView()).navigate(action);
+    }
+
+    private void setScreenVisibility(boolean loading, boolean loaded) {
+        if (loading)
+            loadingScreen.setVisibility(View.VISIBLE);
+        else
+            loadingScreen.setVisibility(View.GONE);
+
+        if (loaded)
+            loadedScreen.setVisibility(View.VISIBLE);
+        else
+            loadedScreen.setVisibility(View.GONE);
     }
 }

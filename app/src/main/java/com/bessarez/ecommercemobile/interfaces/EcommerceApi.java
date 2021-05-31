@@ -6,20 +6,18 @@ import com.bessarez.ecommercemobile.models.Product;
 import com.bessarez.ecommercemobile.models.RecentSearch;
 import com.bessarez.ecommercemobile.models.RegisteredUser;
 import com.bessarez.ecommercemobile.models.UserOrder;
+import com.bessarez.ecommercemobile.models.UserViewedProduct;
+import com.bessarez.ecommercemobile.models.WishProduct;
 import com.bessarez.ecommercemobile.models.apimodels.ApiLogin;
 import com.bessarez.ecommercemobile.models.apimodels.ApiSuggestedProducts;
 import com.bessarez.ecommercemobile.models.apimodels.ApiUserOrders;
-import com.bessarez.ecommercemobile.models.apimodels.ApiWishProduct;
 import com.bessarez.ecommercemobile.models.apimodels.ApiCarouselImages;
 import com.bessarez.ecommercemobile.models.apimodels.ApiToken;
 import com.bessarez.ecommercemobile.models.apimodels.ApiProductCategories;
 import com.bessarez.ecommercemobile.models.apimodels.ApiProducts;
-import com.bessarez.ecommercemobile.models.apimodels.ApiRegisteredUsers;
-import com.bessarez.ecommercemobile.models.apimodels.ApiProduct;
+import com.bessarez.ecommercemobile.models.apimodels.ApiUserViewedProducts;
 import com.bessarez.ecommercemobile.models.apimodels.ApiWishProducts;
 import com.bessarez.ecommercemobile.models.apimodels.ApiRecentSearches;
-import com.bessarez.ecommercemobile.models.apimodels.EphemeralKeyRequest;
-import com.bessarez.ecommercemobile.models.apimodels.EphemeralKeyResponse;
 import com.bessarez.ecommercemobile.models.apimodels.PaymentIntentResponse;
 
 import java.util.List;
@@ -44,8 +42,8 @@ public interface EcommerceApi {
     @GET("/product_categories")
     Call<ApiProductCategories> getProductCategories();
 
-    @GET("/products")
-    Call<ApiProducts> getProducts();
+    @GET("/products/random/{quantity}")
+    Call<ApiProducts> getRandomProducts(@Path("quantity") int quantity);
 
     @GET("/products/{id}")
     Call<Product> getProduct(@Path("id") Long id);
@@ -62,7 +60,7 @@ public interface EcommerceApi {
     Call<RegisteredUser> signup(@Body RegisteredUser newUser);
 
     @POST("/wish_products")
-    Call<ApiWishProduct> addProductToWishList(@Body ApiWishProduct apiWishProduct);
+    Call<Product> addProductToWishList(@Body WishProduct wishProduct);
 
     @GET("/wish_products/user/{id}")
     Call<ApiWishProducts> getWishListProducts(@Path("id") Long id);
@@ -105,4 +103,13 @@ public interface EcommerceApi {
 
     @PUT("/carts/cart_item/{cartItemId}/quantity/{quantity}")
     Call<CartItem> updateCartItemQuantity(@Path("cartItemId") Long cartItemId, @Path("quantity") int quantity);
+
+    @GET("/user_viewed_products/user/{userId}")
+    Call<ApiProducts> getRecentlyViewedProducts(@Path("userId") Long userId);
+
+    @POST("/user_viewed_products")
+    Call<UserViewedProduct> addRecentlyViewedProduct(@Body UserViewedProduct userViewedProduct);
+
+    @GET("/recommended_products/user/{userId}")
+    Call<ApiProducts> getRecommendedProducts(@Path("userId") Long userId);
 }

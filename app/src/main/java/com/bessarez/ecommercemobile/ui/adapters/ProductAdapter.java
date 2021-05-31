@@ -11,40 +11,36 @@ import androidx.appcompat.widget.AppCompatTextView;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.bessarez.ecommercemobile.R;
-import com.bessarez.ecommercemobile.interfaces.OnItemClickListener;
+import com.bessarez.ecommercemobile.interfaces.OnProductClickListener;
 import com.bessarez.ecommercemobile.ui.models.CardProduct;
 import com.squareup.picasso.Picasso;
 
 import java.util.List;
 
-public class CardProductAdapter extends RecyclerView.Adapter<CardProductAdapter.ViewHolder> {
-    private List<CardProduct> mData;
-    private LayoutInflater mInflater;
-    private Context mContext;
+public class ProductAdapter extends RecyclerView.Adapter<ProductAdapter.ViewHolder> {
+    private List<CardProduct> productList;
+    private LayoutInflater inflater;
 
-    private OnItemClickListener mOnItemClickListener;
+    private OnProductClickListener onProductClickListener;
 
-    public CardProductAdapter(List<CardProduct> mData, Context mContext, OnItemClickListener onItemClickListener) {
-        this.mInflater = LayoutInflater.from(mContext);
-        this.mData = mData;
-        this.mContext = mContext;
-        this.mOnItemClickListener = onItemClickListener;
+    public ProductAdapter(List<CardProduct> productList, Context context, OnProductClickListener onProductClickListener) {
+        this.productList = productList;
+        this.inflater = LayoutInflater.from(context);
+        this.onProductClickListener = onProductClickListener;
     }
-
-
 
     @NonNull
     @Override
     public ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
-        View view = mInflater.inflate(R.layout.card_product, parent, false);
-        return new ViewHolder(view, mOnItemClickListener);
+        View view = inflater.inflate(R.layout.card_product, parent, false);
+        return new ViewHolder(view, onProductClickListener);
     }
 
     @Override
     public void onBindViewHolder(@NonNull ViewHolder holder, int position) {
-        String textImg = mData.get(position).getImage();
-        String textTitle = mData.get(position).getTitle();
-        String textPrice = "$ " + mData.get(position).getPrice();
+        String textImg = productList.get(position).getImage();
+        String textTitle = productList.get(position).getTitle();
+        String textPrice = "$ " + productList.get(position).getPrice();
 
         Picasso.get().load(textImg).into(holder.image);
         holder.title.setText(textTitle);
@@ -53,27 +49,27 @@ public class CardProductAdapter extends RecyclerView.Adapter<CardProductAdapter.
 
     @Override
     public int getItemCount() {
-        return mData.size();
+        return productList.size();
     }
 
     public class ViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener {
         AppCompatImageView image;
         AppCompatTextView title, price;
-        OnItemClickListener onItemClickListener;
+        OnProductClickListener onProductClickListener;
 
-        ViewHolder(View itemView, OnItemClickListener onItemClickListener){
+        ViewHolder(View itemView, OnProductClickListener onProductClickListener){
             super(itemView);
             image = itemView.findViewById(R.id.iv_product);
             title = itemView.findViewById(R.id.tv_product_title);
             price = itemView.findViewById(R.id.tv_product_price);
-            this.onItemClickListener = onItemClickListener;
+            this.onProductClickListener = onProductClickListener;
             itemView.setOnClickListener(this);
         }
 
 
         @Override
         public void onClick(View v) {
-            onItemClickListener.onItemClick(v, getAdapterPosition());
+            onProductClickListener.onProductClick(v, productList.get(getAdapterPosition()));
         }
     }
 }

@@ -22,7 +22,7 @@
             android:layout_height="wrap_content" />
     </RelativeLayout>
 
-    <ScrollView
+    <androidx.core.widget.NestedScrollView
         android:id="@+id/loaded_layout"
         android:visibility="gone"
         android:layout_width="match_parent"
@@ -141,5 +141,5 @@
 
         </RelativeLayout>
 
-    </ScrollView>
+    </androidx.core.widget.NestedScrollView>
 </LinearLayout>

@@ -10,7 +10,7 @@ import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.ScrollView;
+import android.widget.LinearLayout;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -22,12 +22,11 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.bessarez.ecommercemobile.R;
-import com.bessarez.ecommercemobile.interfaces.OnItemClickListener;
-import com.bessarez.ecommercemobile.models.CarouselImage;
+import com.bessarez.ecommercemobile.interfaces.OnProductClickListener;
 import com.bessarez.ecommercemobile.models.apimodels.ApiCarouselImages;
 import com.bessarez.ecommercemobile.models.apimodels.ApiProducts;
 import com.bessarez.ecommercemobile.ui.models.CardProduct;
-import com.bessarez.ecommercemobile.ui.adapters.CardProductAdapter;
+import com.bessarez.ecommercemobile.ui.adapters.ProductAdapter;
 
 import static com.bessarez.ecommercemobile.connector.ApiClient.getApiService;
 
@@ -43,13 +42,39 @@ import retrofit2.Response;
 
 import static android.content.ContentValues.TAG;
 
-public class HomeFragment extends Fragment implements OnItemClickListener {
+public class HomeFragment extends Fragment implements OnProductClickListener {
 
-    private List<CardProduct> products;
-    private CardProductAdapter cardProductAdapter;
+    private List<CardProduct> recentProducts;
+    private ProductAdapter recentProductAdapter;
+
+    private List<CardProduct> recommendedProducts;
+    private ProductAdapter recommendedProductAdapter;
+
+    private List<CardProduct> randomProducts;
+    private ProductAdapter randomProductAdapter;
+
+    private List<SlideModel> slideModelList;
+    private ImageSlider imageSlider;
 
     private ConstraintLayout loadingScreen;
-    private ScrollView loadedScreen;
+    private LinearLayout llRecent;
+    private LinearLayout llRecommended;
+    private LinearLayout llRandom;
+
+    private boolean isDataLoaded;
+
+    @Override
+    public void onCreate(@Nullable Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        isDataLoaded = false;
+        getCarouselImages();
+        if (isUserLoggedIn()) {
+            getRecentlyViewedProducts();
+            getRecommendedProducts();
+        } else {
+            getRandomProducts();
+        }
+    }
 
     public View onCreateView(@NonNull LayoutInflater inflater,
                              ViewGroup container, Bundle savedInstanceState) {
@@ -62,44 +87,18 @@ public class HomeFragment extends Fragment implements OnItemClickListener {
         setHasOptionsMenu(true);
 
         loadingScreen = view.findViewById(R.id.loading_layout);
-        loadedScreen = view.findViewById(R.id.loaded_layout);
+        llRecent = view.findViewById(R.id.recent_products);
+        llRecommended = view.findViewById(R.id.recommended_products);
+        llRandom = view.findViewById(R.id.random_products);
 
-        products = new ArrayList<>();
-        cardProductAdapter = new CardProductAdapter(products, getContext(), this);
+        imageSlider = view.findViewById(R.id.slider);
 
-        Call<ApiProducts> call = getApiService().getProducts();
-        call.enqueue(new Callback<ApiProducts>() {
-            @Override
-            public void onResponse(Call<ApiProducts> call, Response<ApiProducts> response) {
-                if (!response.isSuccessful()) {
-                    Log.d(TAG, "Algo falló");
-                    return;
-                }
-
-                ApiProducts apiProducts = response.body();
-
-                for (com.bessarez.ecommercemobile.models.Product product : apiProducts.getEmbeddedServices()) {
-                    products.add(new CardProduct(
-                            product.getId(),
-                            product.getImageUrl(),
-                            product.getName(),
-                            String.valueOf(product.getPrice() / 100.0)
-                    ));
-                    cardProductAdapter.notifyDataSetChanged();
-
-                    loadingScreen.setVisibility(View.GONE);
-                    loadedScreen.setVisibility(View.VISIBLE);
-                }
-            }
-
-            @Override
-            public void onFailure(Call<ApiProducts> call, Throwable t) {
-
-            }
-        });
-
-        loadSlider(view);
-        loadRecycler(view);
+        if (isUserLoggedIn()) {
+            loadRecentProductsRecycler(view);
+            loadRecommendedProductsRecycler(view);
+        } else {
+            loadRandomProductsRecycler(view);
+        }
     }
 
     @Override
@@ -123,18 +122,60 @@ public class HomeFragment extends Fragment implements OnItemClickListener {
         return super.onOptionsItemSelected(item);
     }
 
-    private void loadRecycler(View view) {
-
-        RecyclerView recyclerView = view.findViewById(R.id.rv_products);
-        recyclerView.setNestedScrollingEnabled(false);
-        recyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
-        recyclerView.setAdapter(cardProductAdapter);
+    @Override
+    public void onResume() {
+        super.onResume();
+        if (isDataLoaded) {
+            if (isUserLoggedIn()) {
+                if (recentProducts.size() != 0) {
+                    loadingScreen.setVisibility(View.GONE);
+                    llRecent.setVisibility(View.VISIBLE);
+                    llRecommended.setVisibility(View.VISIBLE);
+                    imageSlider.setVisibility(View.VISIBLE);
+                    imageSlider.setImageList(slideModelList, true);
+                } else {
+                    loadingScreen.setVisibility(View.GONE);
+                    llRandom.setVisibility(View.VISIBLE);
+                    imageSlider.setVisibility(View.VISIBLE);
+                    imageSlider.setImageList(slideModelList, true);
+                }
+            } else {
+                if (randomProducts.size() != 0) {
+                    loadingScreen.setVisibility(View.GONE);
+                    llRandom.setVisibility(View.VISIBLE);
+                    imageSlider.setVisibility(View.VISIBLE);
+                    imageSlider.setImageList(slideModelList, true);
+                }
+            }
+        }
     }
 
-    private void loadSlider(View view) {
-        ImageSlider imageSlider = view.findViewById(R.id.silder);
-        List<SlideModel> slideModelList = new ArrayList<>();
+    private void loadRecentProductsRecycler(View view) {
+        recentProductAdapter = new ProductAdapter(recentProducts, getContext(), this);
+        RecyclerView recentProductsRecycler = view.findViewById(R.id.rv_recent_products);
+        recentProductsRecycler.setNestedScrollingEnabled(false);
+        recentProductsRecycler.setLayoutManager(new LinearLayoutManager(getContext()));
+        recentProductsRecycler.setAdapter(recentProductAdapter);
+    }
 
+    private void loadRecommendedProductsRecycler(View view) {
+        recommendedProductAdapter = new ProductAdapter(recommendedProducts, getContext(), this);
+        RecyclerView recommendedProductsRecycler = view.findViewById(R.id.rv_recommended_products);
+        recommendedProductsRecycler.setNestedScrollingEnabled(false);
+        recommendedProductsRecycler.setLayoutManager(new LinearLayoutManager(getContext()));
+        recommendedProductsRecycler.setAdapter(recommendedProductAdapter);
+    }
+
+    private void loadRandomProductsRecycler(View view) {
+        randomProductAdapter = new ProductAdapter(randomProducts, getContext(), this);
+        RecyclerView randomProductsRecycler = view.findViewById(R.id.rv_random_products);
+        randomProductsRecycler.setNestedScrollingEnabled(false);
+        randomProductsRecycler.setLayoutManager(new LinearLayoutManager(getContext()));
+        randomProductsRecycler.setAdapter(randomProductAdapter);
+    }
+
+    private void getCarouselImages() {
+        slideModelList = new ArrayList<>();
         Call<ApiCarouselImages> call = getApiService().getCarouselImages();
         call.enqueue(new Callback<ApiCarouselImages>() {
             @Override
@@ -145,25 +186,150 @@ public class HomeFragment extends Fragment implements OnItemClickListener {
                 }
 
                 ApiCarouselImages apiCarouselImages = response.body();
-                //fills carousel with images from api
-                for (CarouselImage carouselImage : apiCarouselImages.getEmbeddedServices()
-                ) {
-                    slideModelList.add(new SlideModel(carouselImage.getImageUrl()));
+
+                if (apiCarouselImages.getEmbedded() == null) {
+                    return;
                 }
+
+                apiCarouselImages.getEmbeddedServices().stream()
+                        .forEach(image -> slideModelList.add(new SlideModel(image.getImageUrl())));
                 imageSlider.setImageList(slideModelList, true);
+
+                isDataLoaded = true;
             }
 
             @Override
             public void onFailure(Call<ApiCarouselImages> call, Throwable t) {
-                Log.e(TAG, "onFailure: Prob timeout, printStackTrace for more info (HomeFrag)");
+                t.printStackTrace();
             }
         });
     }
 
+    private void getRecentlyViewedProducts() {
+        recentProducts = new ArrayList<>();
+        Call<ApiProducts> call = getApiService().getRecentlyViewedProducts(getUserIdFromPreferences());
+        call.enqueue(new Callback<ApiProducts>() {
+            @Override
+            public void onResponse(Call<ApiProducts> call, Response<ApiProducts> response) {
+                if (!response.isSuccessful()) {
+                    Log.d(TAG, "Algo falló");
+                    return;
+                }
+
+                ApiProducts apiProducts = response.body();
+
+                if (apiProducts.getEmbedded() == null) return;
+
+                apiProducts.getEmbeddedServices().stream()
+                        .forEach(product ->
+                                recentProducts.add(new CardProduct(
+                                        product.getId(),
+                                        product.getImageUrl(),
+                                        product.getName(),
+                                        String.valueOf(product.getPrice() / 100.0)
+                                ))
+                        );
+                recentProductAdapter.notifyDataSetChanged();
+
+                isDataLoaded = true;
+
+                loadingScreen.setVisibility(View.GONE);
+                llRecommended.setVisibility(View.VISIBLE);
+                llRecent.setVisibility(View.VISIBLE);
+                imageSlider.setVisibility(View.VISIBLE);
+            }
+
+            @Override
+            public void onFailure(Call<ApiProducts> call, Throwable t) {
+
+            }
+        });
+    }
+
+    private void getRecommendedProducts() {
+        recommendedProducts = new ArrayList<>();
+        Call<ApiProducts> call = getApiService().getRecommendedProducts(getUserIdFromPreferences());
+        call.enqueue(new Callback<ApiProducts>() {
+            @Override
+            public void onResponse(Call<ApiProducts> call, Response<ApiProducts> response) {
+                if (!response.isSuccessful()) {
+                    Log.d(TAG, "onResponse: Algo falló");
+                    return;
+                }
+
+                ApiProducts apiProducts = response.body();
+
+                if (apiProducts.getEmbedded() == null) return;
+
+                apiProducts.getEmbeddedServices().stream()
+                        .forEach(product -> recommendedProducts.add(
+                                new CardProduct(
+                                        product.getId(),
+                                        product.getImageUrl(),
+                                        product.getName(),
+                                        String.valueOf(product.getPrice() / 100.0)
+                                )));
+
+                isDataLoaded = true;
+
+                recommendedProductAdapter.notifyDataSetChanged();
+            }
+
+            @Override
+            public void onFailure(Call<ApiProducts> call, Throwable t) {
+                t.printStackTrace();
+            }
+        });
+    }
+
+    private void getRandomProducts() {
+        randomProducts = new ArrayList<>();
+        Call<ApiProducts> call = getApiService().getRandomProducts(10);
+        call.enqueue(new Callback<ApiProducts>() {
+            @Override
+            public void onResponse(Call<ApiProducts> call, Response<ApiProducts> response) {
+                if (!response.isSuccessful()) {
+                    Log.d(TAG, "onResponse: Algo falló");
+                    return;
+                }
+
+                ApiProducts apiProducts = response.body();
+
+                if (apiProducts.getEmbedded() == null) {
+                    return;
+                }
+
+                apiProducts.getEmbeddedServices().stream()
+                        .forEach(product -> randomProducts.add(
+                                new CardProduct(
+                                        product.getId(),
+                                        product.getImageUrl(),
+                                        product.getName(),
+                                        String.valueOf(product.getPrice() / 100.0)
+                                )
+                        ));
+
+                isDataLoaded = true;
+
+                randomProductAdapter.notifyDataSetChanged();
+
+                loadingScreen.setVisibility(View.GONE);
+                llRandom.setVisibility(View.VISIBLE);
+                imageSlider.setVisibility(View.VISIBLE);
+            }
+
+            @Override
+            public void onFailure(Call<ApiProducts> call, Throwable t) {
+                t.printStackTrace();
+            }
+        });
+
+    }
+
     @Override
-    public void onItemClick(View view, int position) {
-        Long productId = products.get(position).getId();
-        HomeFragmentDirections.ActionNavHomeToNavProduct action = HomeFragmentDirections.actionNavHomeToNavProduct(productId);
+    public void onProductClick(View v, CardProduct cardProduct) {
+        HomeFragmentDirections.ActionNavHomeToNavProduct action =
+                HomeFragmentDirections.actionNavHomeToNavProduct(cardProduct.getId());
         Navigation.findNavController(getView()).navigate(action);
     }
 
@@ -179,4 +345,5 @@ public class HomeFragment extends Fragment implements OnItemClickListener {
     private void navigateWithAction(NavDirections action) {
         Navigation.findNavController(getView()).navigate(action);
     }
+
 }

@@ -1,5 +1,6 @@
 package com.bessarez.ecommercemobile.models.apimodels;
 
+import com.bessarez.ecommercemobile.models.RecentSearch;
 import com.google.gson.annotations.SerializedName;
 
 import java.util.ArrayList;
@@ -8,11 +9,15 @@ public class ApiRecentSearches {
     @SerializedName("_embedded")
     private ApiRecentSearches.Service embedded;
 
+    public Service getEmbedded() {
+        return embedded;
+    }
+
     public ApiRecentSearches.Service getEmbeddedServices() {
         return embedded;
     }
 
-    public ArrayList<ApiRecentSearch> getRecentSearchList(){
+    public ArrayList<RecentSearch> getRecentSearchList(){
         return embedded.getApiRecentSearchList();
     }
 
@@ -25,9 +30,9 @@ public class ApiRecentSearches {
     private class Service {
 
         @SerializedName("tupleBackedMaps")
-        private ArrayList<ApiRecentSearch> recentSearchList = new ArrayList<>();
+        private ArrayList<RecentSearch> recentSearchList = new ArrayList<>();
 
-        public ArrayList<ApiRecentSearch> getApiRecentSearchList() {
+        public ArrayList<RecentSearch> getApiRecentSearchList() {
             return recentSearchList;
         }
 

@@ -10,6 +10,10 @@ public class ApiRegisteredUsers {
     @SerializedName("_embedded")
     private Service embedded;
 
+    public Service getEmbedded() {
+        return embedded;
+    }
+
     public List<RegisteredUser> getEmbeddedServices() {
         return embedded.getRegisteredUsers();
     }

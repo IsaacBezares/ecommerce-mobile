@@ -10,6 +10,10 @@ public class ApiUserViewedProducts {
     @SerializedName("_embedded")
     private Service embedded;
 
+    public Service getEmbedded() {
+        return embedded;
+    }
+
     public List<UserViewedProduct> getEmbeddedServices() {
         return embedded.getUserViewedProducts();
     }

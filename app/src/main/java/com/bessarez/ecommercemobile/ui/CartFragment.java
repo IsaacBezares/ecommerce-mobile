@@ -20,7 +20,6 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.RelativeLayout;
-import android.widget.ScrollView;
 import android.widget.TextView;
 
 import com.bessarez.ecommercemobile.CheckoutActivity;
@@ -53,6 +52,19 @@ public class CartFragment extends Fragment implements OnItemClickListener, Quant
     private RelativeLayout emptyScreen;
     private NestedScrollView loadedScreen;
 
+    private boolean isDataLoaded;
+
+    @Override
+    public void onCreate(@Nullable Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        isDataLoaded = false;
+        if (isUserLoggedIn()) {
+            getCart();
+        } else {
+            navigateWithAction(CartFragmentDirections.actionNavCartToNavLogin());
+        }
+    }
+
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
@@ -62,10 +74,6 @@ public class CartFragment extends Fragment implements OnItemClickListener, Quant
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
-
-        if (!isUserLoggedIn()) {
-            navigateWithAction(CartFragmentDirections.actionNavCartToNavLogin());
-        }
 
         loadingScreen = view.findViewById(R.id.loading_layout);
         loadedScreen = view.findViewById(R.id.loaded_layout);
@@ -77,7 +85,18 @@ public class CartFragment extends Fragment implements OnItemClickListener, Quant
         btnCheckout.setOnClickListener(v -> startActivity(new Intent(getActivity(), CheckoutActivity.class)));
 
         loadRecycler(view);
-        fillCartItems();
+    }
+
+    @Override
+    public void onResume() {
+        super.onResume();
+        if (isDataLoaded) {
+            if (!cartItems.isEmpty()) {
+                setScreenVisibility(false,true,false);
+            } else {
+                setScreenVisibility(false,false,true);
+            }
+        }
     }
 
     private void loadRecycler(View view) {
@@ -91,7 +110,7 @@ public class CartFragment extends Fragment implements OnItemClickListener, Quant
         rvCart.setAdapter(adapter);
     }
 
-    private void fillCartItems() {
+    private void getCart() {
 
         SharedPreferences preferences = getContext().getSharedPreferences("credentials", Context.MODE_PRIVATE);
         Long userId = preferences.getLong("userId", 0);
@@ -120,15 +139,15 @@ public class CartFragment extends Fragment implements OnItemClickListener, Quant
                         ))
                         .forEach(cartItems::add);
 
+                isDataLoaded = true;
+
                 if (cartItems.size() > 0){
                     updateTotalPrice();
                     adapter.notifyDataSetChanged();
 
-                    loadingScreen.setVisibility(View.GONE);
-                    loadedScreen.setVisibility(View.VISIBLE);
+                    setScreenVisibility(false,true,false);
                 } else {
-                    loadingScreen.setVisibility(View.GONE);
-                    emptyScreen.setVisibility(View.VISIBLE);
+                    setScreenVisibility(false,false,true);
                 }
             }
 
@@ -226,5 +245,22 @@ public class CartFragment extends Fragment implements OnItemClickListener, Quant
 
     private void navigateWithAction(NavDirections action) {
         Navigation.findNavController(getView()).navigate(action);
+    }
+
+    private void setScreenVisibility(boolean loading, boolean loaded, boolean empty) {
+        if (loading)
+            loadingScreen.setVisibility(View.VISIBLE);
+        else
+            loadingScreen.setVisibility(View.GONE);
+
+        if (loaded)
+            loadedScreen.setVisibility(View.VISIBLE);
+        else
+            loadedScreen.setVisibility(View.GONE);
+
+        if (empty)
+            emptyScreen.setVisibility(View.VISIBLE);
+        else
+            emptyScreen.setVisibility(View.GONE);
     }
 }

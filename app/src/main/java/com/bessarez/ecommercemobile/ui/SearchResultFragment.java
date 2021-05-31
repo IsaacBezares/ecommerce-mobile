@@ -4,6 +4,7 @@ import android.os.Bundle;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.core.widget.NestedScrollView;
 import androidx.fragment.app.Fragment;
 import androidx.navigation.Navigation;
 import androidx.recyclerview.widget.LinearLayoutManager;
@@ -14,12 +15,11 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.RelativeLayout;
-import android.widget.ScrollView;
 
 import com.bessarez.ecommercemobile.R;
-import com.bessarez.ecommercemobile.interfaces.OnItemClickListener;
+import com.bessarez.ecommercemobile.interfaces.OnProductClickListener;
 import com.bessarez.ecommercemobile.models.apimodels.ApiProducts;
-import com.bessarez.ecommercemobile.ui.adapters.CardProductAdapter;
+import com.bessarez.ecommercemobile.ui.adapters.ProductAdapter;
 import com.bessarez.ecommercemobile.ui.models.CardProduct;
 
 import java.util.ArrayList;
@@ -31,14 +31,23 @@ import retrofit2.Response;
 import static android.content.ContentValues.TAG;
 import static com.bessarez.ecommercemobile.connector.ApiClient.getApiService;
 
-public class SearchResultFragment extends Fragment implements OnItemClickListener {
+public class SearchResultFragment extends Fragment implements OnProductClickListener {
 
     private ArrayList<CardProduct> resultProducts;
-    private CardProductAdapter cardProductAdapter;
+    private ProductAdapter productAdapter;
 
     private RelativeLayout loadingScreen;
     private RelativeLayout emptyScreen;
-    private ScrollView loadedScreen;
+    private NestedScrollView loadedScreen;
+
+    private boolean isDataLoaded;
+
+    @Override
+    public void onCreate(@Nullable Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        isDataLoaded = false;
+        getSearchResults();
+    }
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -54,8 +63,30 @@ public class SearchResultFragment extends Fragment implements OnItemClickListene
         loadedScreen = view.findViewById(R.id.loaded_layout);
         emptyScreen = view.findViewById(R.id.empty_layout);
 
-        resultProducts = new ArrayList<>();
-        cardProductAdapter = new CardProductAdapter(resultProducts, getContext(), this);
+        loadRecycler(view);
+    }
+
+    @Override
+    public void onResume() {
+        super.onResume();
+        if (isDataLoaded){
+            if (!resultProducts.isEmpty()) {
+                setScreenVisibility(false,true,false);
+            } else {
+                setScreenVisibility(false,false,true);
+            }
+        }
+    }
+
+    private void loadRecycler(View view) {
+        productAdapter = new ProductAdapter(resultProducts, getContext(), this);
+        RecyclerView recyclerView = view.findViewById(R.id.rv_recent_products);
+        recyclerView.setNestedScrollingEnabled(false);
+        recyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
+        recyclerView.setAdapter(productAdapter);
+    }
+
+    private void getSearchResults() {
 
         String query;
         if (getArguments() != null) {
@@ -63,6 +94,8 @@ public class SearchResultFragment extends Fragment implements OnItemClickListene
         } else {
             return;
         }
+
+        resultProducts = new ArrayList<>();
 
         Call<ApiProducts> call = getApiService().getSearchResults(query);
         call.enqueue(new Callback<ApiProducts>() {
@@ -75,9 +108,10 @@ public class SearchResultFragment extends Fragment implements OnItemClickListene
 
                 ApiProducts apiProducts = response.body();
 
+                isDataLoaded = true;
+
                 if (apiProducts.getEmbedded() == null) {
-                    loadingScreen.setVisibility(View.GONE);
-                    emptyScreen.setVisibility(View.VISIBLE);
+                    setScreenVisibility(false,false,true);
                 }
 
                 if (apiProducts.getEmbedded() != null) {
@@ -90,10 +124,9 @@ public class SearchResultFragment extends Fragment implements OnItemClickListene
                         ));
                     }
 
-                    cardProductAdapter.notifyDataSetChanged();
+                    productAdapter.notifyDataSetChanged();
 
-                    loadingScreen.setVisibility(View.GONE);
-                    loadedScreen.setVisibility(View.VISIBLE);
+                    setScreenVisibility(false,true,false);
                 }
             }
 
@@ -102,23 +135,29 @@ public class SearchResultFragment extends Fragment implements OnItemClickListene
 
             }
         });
-
-        loadRecycler(view);
-    }
-
-    private void loadRecycler(View view) {
-
-        RecyclerView recyclerView = view.findViewById(R.id.rv_products);
-        recyclerView.setNestedScrollingEnabled(false);
-        recyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
-        recyclerView.setAdapter(cardProductAdapter);
-
     }
 
     @Override
-    public void onItemClick(View view, int position) {
-        Long productId = resultProducts.get(position).getId();
-        SearchResultFragmentDirections.ActionNavSearchResultToNavProduct action = SearchResultFragmentDirections.actionNavSearchResultToNavProduct(productId);
+    public void onProductClick(View v, CardProduct cardProduct) {
+        SearchResultFragmentDirections.ActionNavSearchResultToNavProduct action =
+                SearchResultFragmentDirections.actionNavSearchResultToNavProduct(cardProduct.getId());
         Navigation.findNavController(getView()).navigate(action);
+    }
+
+    private void setScreenVisibility(boolean loading, boolean loaded, boolean empty) {
+        if (loading)
+            loadingScreen.setVisibility(View.VISIBLE);
+        else
+            loadingScreen.setVisibility(View.GONE);
+
+        if (loaded)
+            loadedScreen.setVisibility(View.VISIBLE);
+        else
+            loadedScreen.setVisibility(View.GONE);
+
+        if (empty)
+            emptyScreen.setVisibility(View.VISIBLE);
+        else
+            emptyScreen.setVisibility(View.GONE);
     }
 }

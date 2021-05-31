@@ -56,4 +56,6 @@
     <string name="you_have_no_products_on_your_wish_list">You have no products on your wish list</string>
     <string name="we_couldn_t_found_any_products">We couldn\'t found any products</string>
     <string name="try_checking_your_spelling">Try checking your spelling</string>
+    <string name="welcome">Welcome!</string>
+    <string name="recently_viewed_products">Recent products</string>
 </resources>

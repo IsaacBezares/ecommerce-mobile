@@ -49,9 +49,17 @@ public class OrdersFragment extends Fragment implements OnItemClickListener {
     private RelativeLayout emptyScreen;
     private NestedScrollView loadedScreen;
 
+    private boolean isDataLoaded;
+
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        isDataLoaded = false;
+        if (isUserLoggedIn()) {
+            getOrders();
+        } else {
+            navigateWithAction(OrdersFragmentDirections.actionNavOrdersToNavLogin());
+        }
     }
 
     public View onCreateView(@NonNull LayoutInflater inflater,
@@ -62,19 +70,28 @@ public class OrdersFragment extends Fragment implements OnItemClickListener {
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
-        if (!isUserLoggedIn()) {
-            navigateWithAction(OrdersFragmentDirections.actionNavOrdersToNavLogin());
-        }
 
         loadingScreen = view.findViewById(R.id.loading_layout);
         loadedScreen = view.findViewById(R.id.loaded_layout);
         emptyScreen = view.findViewById(R.id.empty_layout);
 
-        fillOrderList();
         loadRecycler(view);
     }
 
+    @Override
+    public void onResume() {
+        super.onResume();
+        if (isDataLoaded) {
+            if (!consolidatedList.isEmpty()) {
+                setScreenVisibility(false,true,false);
+            } else {
+                setScreenVisibility(false,false,true);
+            }
+        }
+    }
+
     private void loadRecycler(View view) {
+        orderAdapter = new OrderAdapter(getContext(), consolidatedList, this);
         RecyclerView rv_orders = view.findViewById(R.id.rv_orders);
         rv_orders.setNestedScrollingEnabled(false);
         LinearLayoutManager layoutManager = new LinearLayoutManager(getContext());
@@ -83,13 +100,11 @@ public class OrdersFragment extends Fragment implements OnItemClickListener {
         rv_orders.setAdapter(orderAdapter);
     }
 
-    private void fillOrderList() {
+    private void getOrders() {
         SharedPreferences preferences = getContext().getSharedPreferences("credentials", Context.MODE_PRIVATE);
         Long userId = preferences.getLong("userId", 0);
 
         if (userId == 0) return;
-
-        orderAdapter = new OrderAdapter(getContext(), consolidatedList, this);
 
         Call<ApiUserOrders> userOrders = getApiService().getUserOrders(userId);
         userOrders.enqueue(new Callback<ApiUserOrders>() {
@@ -103,8 +118,7 @@ public class OrdersFragment extends Fragment implements OnItemClickListener {
                 ApiUserOrders apiUserOrders = response.body();
 
                 if (apiUserOrders.getEmbedded() == null) {
-                    loadingScreen.setVisibility(View.GONE);
-                    emptyScreen.setVisibility(View.VISIBLE);
+                    setScreenVisibility(false,false,true);
                     return;
                 }
 
@@ -127,10 +141,11 @@ public class OrdersFragment extends Fragment implements OnItemClickListener {
 
                 }
 
+                isDataLoaded = true;
+
                 orderAdapter.notifyDataSetChanged();
 
-                loadingScreen.setVisibility(View.GONE);
-                loadedScreen.setVisibility(View.VISIBLE);
+                setScreenVisibility(false,true,false);
             }
 
             private double calcIndividualAmountDouble(OrderProduct orderProduct) {
@@ -163,5 +178,22 @@ public class OrdersFragment extends Fragment implements OnItemClickListener {
 
     private void navigateWithAction(NavDirections action) {
         Navigation.findNavController(getView()).navigate(action);
+    }
+
+    private void setScreenVisibility(boolean loading, boolean loaded, boolean empty) {
+        if (loading)
+            loadingScreen.setVisibility(View.VISIBLE);
+        else
+            loadingScreen.setVisibility(View.GONE);
+
+        if (loaded)
+            loadedScreen.setVisibility(View.VISIBLE);
+        else
+            loadedScreen.setVisibility(View.GONE);
+
+        if (empty)
+            emptyScreen.setVisibility(View.VISIBLE);
+        else
+            emptyScreen.setVisibility(View.GONE);
     }
 }

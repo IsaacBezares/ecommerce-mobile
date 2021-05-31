@@ -1,5 +1,6 @@
 package com.bessarez.ecommercemobile.models.apimodels;
 
+import com.bessarez.ecommercemobile.models.Product;
 import com.google.gson.annotations.SerializedName;
 
 import java.util.ArrayList;
@@ -10,20 +11,24 @@ public class ApiSuggestedProducts {
     @SerializedName("_embedded")
     private Service embedded;
 
+    public Service getEmbedded() {
+        return embedded;
+    }
+
     public Service getEmbeddedServices() {
         return embedded;
     }
 
-    public ArrayList<ApiSuggestedProduct> getSuggestionList(){
+    public ArrayList<Product> getSuggestionList(){
         return embedded.getApiSuggestedProductList();
     }
 
     private class Service {
 
         @SerializedName("products")
-        private ArrayList<ApiSuggestedProduct> productSuggestionList = new ArrayList<>();
+        private ArrayList<Product> productSuggestionList = new ArrayList<>();
 
-        public ArrayList<ApiSuggestedProduct> getApiSuggestedProductList() {
+        public ArrayList<Product> getApiSuggestedProductList() {
             return productSuggestionList;
         }
     }

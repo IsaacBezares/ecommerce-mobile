@@ -15,13 +15,15 @@
 
     <TextView
         android:id="@+id/tv_product_title"
-        android:layout_width="wrap_content"
+        android:layout_width="0dp"
         android:layout_height="0dp"
         android:layout_marginStart="15dp"
-        android:textSize="18sp"
+        android:textSize="16sp"
+        android:lines="3"
         android:fontFamily="@font/regular"
         android:textColor="@color/secondary"
         app:layout_constraintBottom_toBottomOf="@+id/iv_product"
         app:layout_constraintStart_toEndOf="@+id/iv_product"
+        app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintTop_toTopOf="@+id/iv_product" />
 </androidx.constraintlayout.widget.ConstraintLayout>

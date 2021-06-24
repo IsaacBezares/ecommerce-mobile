@@ -4,7 +4,6 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.TextView;
@@ -65,6 +64,10 @@ public class CheckoutActivity extends AppCompatActivity {
         actionBar.setDisplayShowTitleEnabled(false);
         actionBar.setDisplayHomeAsUpEnabled(true);
 
+
+        CardInputWidget cardInputWidget = findViewById(R.id.cardInputWidget);
+        cardInputWidget.setCardHint("424242424242");
+
         // Configure the SDK with your Stripe publishable key so it can make requests to Stripe
         stripe = new Stripe(
                 getApplicationContext(),
@@ -97,7 +100,6 @@ public class CheckoutActivity extends AppCompatActivity {
             @Override
             public void onResponse(Call<Product> call, Response<Product> response) {
                 if (!response.isSuccessful()) {
-                    Log.d(TAG, "onResponse: Algo falló");
                     return;
                 }
 
@@ -111,7 +113,7 @@ public class CheckoutActivity extends AppCompatActivity {
 
             @Override
             public void onFailure(Call<Product> call, Throwable t) {
-
+                t.printStackTrace();
             }
         });
     }
@@ -123,7 +125,6 @@ public class CheckoutActivity extends AppCompatActivity {
             @Override
             public void onResponse(Call<Cart> call, Response<Cart> response) {
                 if (!response.isSuccessful()) {
-                    Log.d(TAG, "onResponse: Algo pasó");
                     return;
                 }
 
@@ -308,7 +309,7 @@ public class CheckoutActivity extends AppCompatActivity {
 
                 activity.displayPaymentSucceededAlert(
                         "Payment completed",
-                        paymentIntent.toString()
+                        "You payment has been registered successfully"
                 );
             } else if (status == PaymentIntent.Status.RequiresPaymentMethod) {
                 // Payment failed – allow retrying using a different payment method
@@ -349,9 +350,6 @@ public class CheckoutActivity extends AppCompatActivity {
         call.enqueue(new Callback<UserOrder>() {
             @Override
             public void onResponse(Call<UserOrder> call, Response<UserOrder> response) {
-                if (!response.isSuccessful()){
-                    Log.d(TAG, "onResponse: Algo falló");
-                }
             }
 
             @Override
@@ -366,7 +364,6 @@ public class CheckoutActivity extends AppCompatActivity {
         call2.enqueue(new Callback<Void>() {
             @Override
             public void onResponse(Call<Void> call, Response<Void> response) {
-                if (!response.isSuccessful()) Log.d(TAG, "onResponse: Algo falló");
             }
 
             @Override
@@ -383,7 +380,6 @@ public class CheckoutActivity extends AppCompatActivity {
                 .forEach(call -> call.enqueue(new Callback<Product>() {
                     @Override
                     public void onResponse(Call<Product> call, Response<Product> response) {
-                        if (!response.isSuccessful()) Log.d(TAG, "onResponse: Algo falló");
                     }
 
                     @Override

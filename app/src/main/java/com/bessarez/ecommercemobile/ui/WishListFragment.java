@@ -3,7 +3,6 @@ package com.bessarez.ecommercemobile.ui;
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -46,17 +45,6 @@ public class WishListFragment extends Fragment implements OnProductClickListener
 
     private boolean isDataLoaded;
 
-    @Override
-    public void onCreate(@Nullable Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        if (isUserLoggedIn()) {
-            isDataLoaded = false;
-            getWishList();
-        } else {
-            navigateWithAction(WishListFragmentDirections.actionNavWishListToNavLogin());
-        }
-    }
-
     public View onCreateView(@NonNull LayoutInflater inflater,
                              ViewGroup container, Bundle savedInstanceState) {
         return inflater.inflate(R.layout.fragment_wish_list, container, false);
@@ -65,6 +53,13 @@ public class WishListFragment extends Fragment implements OnProductClickListener
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
+
+        if (isUserLoggedIn()) {
+            isDataLoaded = false;
+            getWishList();
+        } else {
+            navigateWithAction(WishListFragmentDirections.actionNavWishListToNavLogin());
+        }
 
         loadingScreen = view.findViewById(R.id.loading_layout);
         loadedScreen = view.findViewById(R.id.loaded_layout);
@@ -102,18 +97,13 @@ public class WishListFragment extends Fragment implements OnProductClickListener
             @Override
             public void onResponse(Call<ApiWishProducts> call, Response<ApiWishProducts> response) {
                 if (!response.isSuccessful()) {
-                    Log.d(TAG, "Algo falló");
+                    setScreenVisibility(false, false, true);
                     return;
                 }
 
                 ApiWishProducts apiProducts = response.body();
 
                 isDataLoaded = true;
-
-                if (apiProducts.getEmbedded() == null) {
-                    setScreenVisibility(false,false,true);
-                    return;
-                }
 
                 for (Product product : apiProducts.getEmbeddedServices()) {
                     products.add(new CardProduct(
@@ -125,12 +115,12 @@ public class WishListFragment extends Fragment implements OnProductClickListener
                     productAdapter.notifyDataSetChanged();
                 }
 
-                setScreenVisibility(false,true,false);
+                setScreenVisibility(false, true, false);
             }
 
             @Override
             public void onFailure(Call<ApiWishProducts> call, Throwable t) {
-
+                t.printStackTrace();
             }
         });
     }

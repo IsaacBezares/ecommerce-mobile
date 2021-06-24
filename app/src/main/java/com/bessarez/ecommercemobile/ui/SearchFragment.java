@@ -12,7 +12,6 @@ import androidx.navigation.Navigation;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -183,7 +182,6 @@ public class SearchFragment extends Fragment implements OnItemClickListener {
             @Override
             public void onResponse(Call<ApiSuggestedProducts> call, Response<ApiSuggestedProducts> response) {
                 if (!response.isSuccessful()) {
-                    Log.d(TAG, "onResponse: Algo falló");
                     return;
                 }
                 searchSuggestions.clear();
@@ -200,7 +198,7 @@ public class SearchFragment extends Fragment implements OnItemClickListener {
 
             @Override
             public void onFailure(Call<ApiSuggestedProducts> call, Throwable t) {
-                Log.d(TAG, "onFailure: Algo falló");
+                t.printStackTrace();
             }
         });
     }
@@ -211,7 +209,6 @@ public class SearchFragment extends Fragment implements OnItemClickListener {
             @Override
             public void onResponse(Call<ApiRecentSearches> call, Response<ApiRecentSearches> response) {
                 if (!response.isSuccessful()) {
-                    Log.d(TAG, "onResponse: Algo falló");
                     return;
                 }
 
@@ -231,7 +228,7 @@ public class SearchFragment extends Fragment implements OnItemClickListener {
 
             @Override
             public void onFailure(Call<ApiRecentSearches> call, Throwable t) {
-                Log.d(TAG, "onFailure: Algo falló");
+                t.printStackTrace();
             }
         });
     }
@@ -245,15 +242,11 @@ public class SearchFragment extends Fragment implements OnItemClickListener {
         call.enqueue(new Callback<RecentSearch>() {
             @Override
             public void onResponse(Call<RecentSearch> call, Response<RecentSearch> response) {
-                if (!response.isSuccessful()) {
-                    Log.d(TAG, "onResponse: Algo pasó");
-                    return;
-                }
             }
 
             @Override
             public void onFailure(Call<RecentSearch> call, Throwable t) {
-                Log.d(TAG, "onFailure: Algo pasó");
+                t.printStackTrace();
             }
         });
     }

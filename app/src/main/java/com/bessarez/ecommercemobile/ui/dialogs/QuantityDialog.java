@@ -4,7 +4,6 @@ import android.app.AlertDialog;
 import android.app.Dialog;
 import android.content.Context;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.AdapterView;
@@ -82,8 +81,6 @@ public class QuantityDialog extends DialogFragment implements AdapterView.OnItem
     public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
         Integer quantity = (Integer) parent.getItemAtPosition(position);
         onQuantityListener.sendQuantity(quantity, this.position);
-        Log.d(TAG, "view height: " + view.getHeight());
-        Log.d(TAG, "adapterview height: " + parent.getHeight());
         getDialog().dismiss();
     }
 

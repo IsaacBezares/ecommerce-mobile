@@ -3,7 +3,6 @@ package com.bessarez.ecommercemobile.ui;
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -51,17 +50,6 @@ public class OrdersFragment extends Fragment implements OnItemClickListener {
 
     private boolean isDataLoaded;
 
-    @Override
-    public void onCreate(@Nullable Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        isDataLoaded = false;
-        if (isUserLoggedIn()) {
-            getOrders();
-        } else {
-            navigateWithAction(OrdersFragmentDirections.actionNavOrdersToNavLogin());
-        }
-    }
-
     public View onCreateView(@NonNull LayoutInflater inflater,
                              ViewGroup container, Bundle savedInstanceState) {
         return inflater.inflate(R.layout.fragment_orders, container, false);
@@ -70,6 +58,13 @@ public class OrdersFragment extends Fragment implements OnItemClickListener {
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
+
+        isDataLoaded = false;
+        if (isUserLoggedIn()) {
+            getOrders();
+        } else {
+            navigateWithAction(OrdersFragmentDirections.actionNavOrdersToNavLogin());
+        }
 
         loadingScreen = view.findViewById(R.id.loading_layout);
         loadedScreen = view.findViewById(R.id.loaded_layout);
@@ -111,16 +106,11 @@ public class OrdersFragment extends Fragment implements OnItemClickListener {
             @Override
             public void onResponse(Call<ApiUserOrders> call, Response<ApiUserOrders> response) {
                 if (!response.isSuccessful()) {
-                    Log.d(TAG, "Algo falló");
+                    setScreenVisibility(false,false,true);
                     return;
                 }
 
                 ApiUserOrders apiUserOrders = response.body();
-
-                if (apiUserOrders.getEmbedded() == null) {
-                    setScreenVisibility(false,false,true);
-                    return;
-                }
 
                 for (UserOrder order : apiUserOrders.getEmbeddedServices()) {
                     long orderId = order.getId();
@@ -154,14 +144,13 @@ public class OrdersFragment extends Fragment implements OnItemClickListener {
 
             @Override
             public void onFailure(Call<ApiUserOrders> call, Throwable t) {
-                Log.d(TAG, "onFailure: Algo falló");
+                t.printStackTrace();
             }
         });
     }
 
     @Override
     public void onItemClick(View view, int position) {
-        Log.d(TAG, "onProductClick: hizo algo");
         Long productId = ((CardOrderItem) consolidatedList.get(position)).getId();
         OrdersFragmentDirections.ActionNavOrdersToNavProduct action = OrdersFragmentDirections.actionNavOrdersToNavProduct(productId);
         Navigation.findNavController(getView()).navigate(action);

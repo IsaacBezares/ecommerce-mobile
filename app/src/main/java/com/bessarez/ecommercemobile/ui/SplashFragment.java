@@ -38,7 +38,7 @@ public class SplashFragment extends Fragment {
 
             @Override
             public void onFailure(Call<Void> call, Throwable t) {
-
+                t.printStackTrace();
             }
         });
     }

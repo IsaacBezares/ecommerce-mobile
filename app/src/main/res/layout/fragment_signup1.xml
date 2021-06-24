@@ -1,123 +1,130 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:padding="30dp"
-    tools:context=".ui.Signup1Fragment">
+    tools:context=".ui.Signup1Fragment"
+    android:overScrollMode="never"
+    android:scrollbarSize="0dp">
 
-    <TextView
-        android:id="@+id/welcome"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:fontFamily="@font/bold"
-        android:text="@string/welcome"
-        android:textColor="@color/black"
-        android:textSize="35sp"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
-
-    <TextView
-        android:id="@+id/complete_registration"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="24dp"
-        android:fontFamily="@font/regular"
-        android:text="@string/complete_the_registration_form"
-        android:textColor="@color/black"
-        android:textSize="15sp"
-        app:layout_constraintStart_toStartOf="@+id/welcome"
-        app:layout_constraintTop_toBottomOf="@+id/welcome" />
-
-    <EditText
-        android:id="@+id/et_first_name"
+    <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"
-        android:layout_height="41dp"
-        android:layout_marginTop="64dp"
-        android:background="@drawable/input_field_bordered"
-        android:fontFamily="@font/regular"
-        android:maxLength="12"
-        android:hint="@string/fist_name"
-        android:inputType="textPersonName"
-        android:textColorHint="@color/gray_dark"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/complete_registration" />
+        android:layout_height="wrap_content">
 
-    <EditText
-        android:id="@+id/et_last_name"
-        android:layout_width="0dp"
-        android:layout_height="41dp"
-        android:layout_marginTop="32dp"
-        android:background="@drawable/input_field_bordered"
-        android:fontFamily="@font/regular"
-        android:hint="@string/last_name"
-        android:inputType="textPersonName"
-        android:textColorHint="@color/gray_dark"
-        app:layout_constraintEnd_toEndOf="@+id/et_first_name"
-        app:layout_constraintHorizontal_bias="0.0"
-        app:layout_constraintStart_toStartOf="@+id/et_first_name"
-        app:layout_constraintTop_toBottomOf="@+id/et_first_name" />
+        <TextView
+            android:id="@+id/welcome"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:fontFamily="@font/bold"
+            android:text="@string/welcome"
+            android:textColor="@color/black"
+            android:textSize="35sp"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
 
-    <EditText
-        android:id="@+id/et_phone"
-        android:layout_width="0dp"
-        android:layout_height="41dp"
-        android:layout_marginTop="32dp"
-        android:background="@drawable/input_field_bordered"
-        android:fontFamily="@font/regular"
-        android:hint="@string/phone_number"
-        android:inputType="phone"
-        android:textColorHint="@color/gray_dark"
-        app:layout_constraintEnd_toEndOf="@+id/et_last_name"
-        app:layout_constraintHorizontal_bias="1.0"
-        app:layout_constraintStart_toStartOf="@+id/et_last_name"
-        app:layout_constraintTop_toBottomOf="@+id/et_last_name" />
+        <TextView
+            android:id="@+id/complete_registration"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="24dp"
+            android:fontFamily="@font/regular"
+            android:text="@string/complete_the_registration_form"
+            android:textColor="@color/black"
+            android:textSize="15sp"
+            app:layout_constraintStart_toStartOf="@+id/welcome"
+            app:layout_constraintTop_toBottomOf="@+id/welcome" />
 
-    <EditText
-        android:id="@+id/et_email"
-        android:layout_width="0dp"
-        android:layout_height="41dp"
-        android:layout_marginTop="32dp"
-        android:background="@drawable/input_field_bordered"
-        android:fontFamily="@font/regular"
-        android:hint="@string/e_mail"
-        android:inputType="textEmailAddress"
-        android:textColorHint="@color/gray_dark"
-        app:layout_constraintEnd_toEndOf="@+id/et_phone"
-        app:layout_constraintHorizontal_bias="0.0"
-        app:layout_constraintStart_toStartOf="@+id/et_phone"
-        app:layout_constraintTop_toBottomOf="@+id/et_phone" />
+        <EditText
+            android:id="@+id/et_first_name"
+            android:layout_width="match_parent"
+            android:layout_height="41dp"
+            android:layout_marginTop="64dp"
+            android:background="@drawable/input_field_bordered"
+            android:fontFamily="@font/regular"
+            android:hint="@string/fist_name"
+            android:inputType="textPersonName"
+            android:maxLength="12"
+            android:textColorHint="@color/gray_dark"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/complete_registration" />
 
-    <EditText
-        android:id="@+id/et_password"
-        android:layout_width="0dp"
-        android:layout_height="41dp"
-        android:layout_marginTop="32dp"
-        android:background="@drawable/input_field_bordered"
-        android:fontFamily="@font/regular"
-        android:hint="@string/password"
-        android:inputType="textPassword"
-        android:textColorHint="@color/gray_dark"
-        app:layout_constraintEnd_toEndOf="@+id/et_email"
-        app:layout_constraintStart_toStartOf="@+id/et_email"
-        app:layout_constraintTop_toBottomOf="@+id/et_email" />
+        <EditText
+            android:id="@+id/et_last_name"
+            android:layout_width="0dp"
+            android:layout_height="41dp"
+            android:layout_marginTop="32dp"
+            android:background="@drawable/input_field_bordered"
+            android:fontFamily="@font/regular"
+            android:hint="@string/last_name"
+            android:inputType="textPersonName"
+            android:textColorHint="@color/gray_dark"
+            app:layout_constraintEnd_toEndOf="@+id/et_first_name"
+            app:layout_constraintHorizontal_bias="0.0"
+            app:layout_constraintStart_toStartOf="@+id/et_first_name"
+            app:layout_constraintTop_toBottomOf="@+id/et_first_name" />
 
-    <androidx.appcompat.widget.AppCompatButton
-        android:id="@+id/btn_continue_signup"
-        style="@style/Theme.EcommerceMobile.ButtonMatchParent"
-        android:layout_width="0dp"
-        android:layout_height="40dp"
-        android:layout_marginTop="64dp"
-        android:background="@drawable/rounded_button"
-        android:backgroundTint="@color/secondary"
-        android:text="@string/Continue"
-        android:textAlignment="center"
-        android:textColor="@color/white"
-        app:layout_constraintEnd_toEndOf="@+id/et_password"
-        app:layout_constraintStart_toStartOf="@+id/et_password"
-        app:layout_constraintTop_toBottomOf="@+id/et_password" />
+        <EditText
+            android:id="@+id/et_phone"
+            android:layout_width="0dp"
+            android:layout_height="41dp"
+            android:layout_marginTop="32dp"
+            android:background="@drawable/input_field_bordered"
+            android:fontFamily="@font/regular"
+            android:hint="@string/phone_number"
+            android:inputType="phone"
+            android:textColorHint="@color/gray_dark"
+            app:layout_constraintEnd_toEndOf="@+id/et_last_name"
+            app:layout_constraintHorizontal_bias="1.0"
+            app:layout_constraintStart_toStartOf="@+id/et_last_name"
+            app:layout_constraintTop_toBottomOf="@+id/et_last_name" />
 
+        <EditText
+            android:id="@+id/et_email"
+            android:layout_width="0dp"
+            android:layout_height="41dp"
+            android:layout_marginTop="32dp"
+            android:background="@drawable/input_field_bordered"
+            android:fontFamily="@font/regular"
+            android:hint="@string/e_mail"
+            android:inputType="textEmailAddress"
+            android:textColorHint="@color/gray_dark"
+            app:layout_constraintEnd_toEndOf="@+id/et_phone"
+            app:layout_constraintHorizontal_bias="0.0"
+            app:layout_constraintStart_toStartOf="@+id/et_phone"
+            app:layout_constraintTop_toBottomOf="@+id/et_phone" />
 
-</androidx.constraintlayout.widget.ConstraintLayout>
+        <EditText
+            android:id="@+id/et_password"
+            android:layout_width="0dp"
+            android:layout_height="41dp"
+            android:layout_marginTop="32dp"
+            android:background="@drawable/input_field_bordered"
+            android:fontFamily="@font/regular"
+            android:hint="@string/password"
+            android:inputType="textPassword"
+            android:textColorHint="@color/gray_dark"
+            app:layout_constraintEnd_toEndOf="@+id/et_email"
+            app:layout_constraintStart_toStartOf="@+id/et_email"
+            app:layout_constraintTop_toBottomOf="@+id/et_email" />
+
+        <androidx.appcompat.widget.AppCompatButton
+            android:id="@+id/btn_continue_signup"
+            style="@style/Theme.EcommerceMobile.ButtonMatchParent"
+            android:layout_width="0dp"
+            android:layout_height="40dp"
+            android:layout_marginTop="64dp"
+            android:background="@drawable/rounded_button"
+            android:backgroundTint="@color/secondary"
+            android:text="@string/Continue"
+            android:textAlignment="center"
+            android:textColor="@color/white"
+            app:layout_constraintEnd_toEndOf="@+id/et_password"
+            app:layout_constraintStart_toStartOf="@+id/et_password"
+            app:layout_constraintTop_toBottomOf="@+id/et_password" />
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+
+</ScrollView>

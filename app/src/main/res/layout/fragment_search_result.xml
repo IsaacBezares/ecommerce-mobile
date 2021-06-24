@@ -37,8 +37,9 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_centerHorizontal="true"
-                android:text="@string/we_couldn_t_found_any_products"
                 android:fontFamily="@font/regular"
+                android:gravity="center"
+                android:text="@string/we_couldn_t_found_any_products"
                 android:textColor="@color/secondary"
                 android:textSize="17sp" />
 
@@ -48,6 +49,7 @@
                 android:layout_below="@id/textView2"
                 android:layout_centerHorizontal="true"
                 android:fontFamily="@font/regular"
+                android:gravity="center"
                 android:text="@string/try_checking_your_spelling"
                 android:textColor="@color/gray"
                 android:textSize="17sp" />

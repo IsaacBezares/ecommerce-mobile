@@ -3,7 +3,6 @@ package com.bessarez.ecommercemobile.ui;
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -127,24 +126,14 @@ public class HomeFragment extends Fragment implements OnProductClickListener {
         super.onResume();
         if (isDataLoaded) {
             if (isUserLoggedIn()) {
-                if (recentProducts.size() != 0) {
-                    loadingScreen.setVisibility(View.GONE);
-                    llRecent.setVisibility(View.VISIBLE);
-                    llRecommended.setVisibility(View.VISIBLE);
-                    imageSlider.setVisibility(View.VISIBLE);
-                    imageSlider.setImageList(slideModelList, true);
+                if (!recentProducts.isEmpty()) {
+                    setScreenVisibility(false,true,true,true,false);
                 } else {
-                    loadingScreen.setVisibility(View.GONE);
-                    llRandom.setVisibility(View.VISIBLE);
-                    imageSlider.setVisibility(View.VISIBLE);
-                    imageSlider.setImageList(slideModelList, true);
+                    setScreenVisibility(false,true,false,false,true);
                 }
             } else {
-                if (randomProducts.size() != 0) {
-                    loadingScreen.setVisibility(View.GONE);
-                    llRandom.setVisibility(View.VISIBLE);
-                    imageSlider.setVisibility(View.VISIBLE);
-                    imageSlider.setImageList(slideModelList, true);
+                if (!randomProducts.isEmpty()) {
+                    setScreenVisibility(false,true,false,false,true);
                 }
             }
         }
@@ -181,7 +170,6 @@ public class HomeFragment extends Fragment implements OnProductClickListener {
             @Override
             public void onResponse(Call<ApiCarouselImages> call, Response<ApiCarouselImages> response) {
                 if (!response.isSuccessful()) {
-                    Log.d(TAG, "Algo falló");
                     return;
                 }
 
@@ -212,7 +200,8 @@ public class HomeFragment extends Fragment implements OnProductClickListener {
             @Override
             public void onResponse(Call<ApiProducts> call, Response<ApiProducts> response) {
                 if (!response.isSuccessful()) {
-                    Log.d(TAG, "Algo falló");
+                    getRandomProducts();
+                    loadRandomProductsRecycler(getView());
                     return;
                 }
 
@@ -233,15 +222,12 @@ public class HomeFragment extends Fragment implements OnProductClickListener {
 
                 isDataLoaded = true;
 
-                loadingScreen.setVisibility(View.GONE);
-                llRecommended.setVisibility(View.VISIBLE);
-                llRecent.setVisibility(View.VISIBLE);
-                imageSlider.setVisibility(View.VISIBLE);
+                setScreenVisibility(false,true,true,true,false);
             }
 
             @Override
             public void onFailure(Call<ApiProducts> call, Throwable t) {
-
+                t.printStackTrace();
             }
         });
     }
@@ -253,7 +239,6 @@ public class HomeFragment extends Fragment implements OnProductClickListener {
             @Override
             public void onResponse(Call<ApiProducts> call, Response<ApiProducts> response) {
                 if (!response.isSuccessful()) {
-                    Log.d(TAG, "onResponse: Algo falló");
                     return;
                 }
 
@@ -289,7 +274,6 @@ public class HomeFragment extends Fragment implements OnProductClickListener {
             @Override
             public void onResponse(Call<ApiProducts> call, Response<ApiProducts> response) {
                 if (!response.isSuccessful()) {
-                    Log.d(TAG, "onResponse: Algo falló");
                     return;
                 }
 
@@ -313,9 +297,8 @@ public class HomeFragment extends Fragment implements OnProductClickListener {
 
                 randomProductAdapter.notifyDataSetChanged();
 
-                loadingScreen.setVisibility(View.GONE);
-                llRandom.setVisibility(View.VISIBLE);
-                imageSlider.setVisibility(View.VISIBLE);
+                setScreenVisibility(false,true,false,false,true);
+
             }
 
             @Override
@@ -346,4 +329,32 @@ public class HomeFragment extends Fragment implements OnProductClickListener {
         Navigation.findNavController(getView()).navigate(action);
     }
 
+    private void setScreenVisibility(boolean loading, boolean slider, boolean recent, boolean recommended, boolean random) {
+        if (loading)
+            loadingScreen.setVisibility(View.VISIBLE);
+        else
+            loadingScreen.setVisibility(View.GONE);
+
+        if (slider) {
+            imageSlider.setVisibility(View.VISIBLE);
+            imageSlider.setImageList(slideModelList, true);
+        }
+        else
+            imageSlider.setVisibility(View.GONE);
+
+        if (recent)
+            llRecent.setVisibility(View.VISIBLE);
+        else
+            llRecent.setVisibility(View.GONE);
+
+        if (recommended)
+            llRecommended.setVisibility(View.VISIBLE);
+        else
+            llRecommended.setVisibility(View.GONE);
+
+        if (random)
+            llRandom.setVisibility(View.VISIBLE);
+        else
+            llRandom.setVisibility(View.GONE);
+    }
 }

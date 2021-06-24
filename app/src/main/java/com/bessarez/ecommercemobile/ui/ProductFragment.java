@@ -3,6 +3,7 @@ package com.bessarez.ecommercemobile.ui;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.content.res.Configuration;
 import android.net.Uri;
 import android.os.Bundle;
 
@@ -14,7 +15,6 @@ import androidx.fragment.app.Fragment;
 import androidx.navigation.NavDirections;
 import androidx.navigation.Navigation;
 
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -119,6 +119,11 @@ public class ProductFragment extends Fragment implements QuantityDialog.OnQuanti
         }
     }
 
+    @Override
+    public void onConfigurationChanged(@NonNull Configuration newConfig) {
+        super.onConfigurationChanged(newConfig);
+    }
+
     private void addToRecentlyViewedProducts(Long userId, Long productId) {
 
         UserViewedProduct userViewedProduct =
@@ -128,9 +133,6 @@ public class ProductFragment extends Fragment implements QuantityDialog.OnQuanti
         call.enqueue(new Callback<UserViewedProduct>() {
             @Override
             public void onResponse(Call<UserViewedProduct> call, Response<UserViewedProduct> response) {
-                if (!response.isSuccessful()) {
-                    Log.d(TAG, "onResponse: Algo falló");
-                }
             }
 
             @Override
@@ -146,7 +148,6 @@ public class ProductFragment extends Fragment implements QuantityDialog.OnQuanti
             @Override
             public void onResponse(@NotNull Call<Product> call, @NotNull Response<Product> response) {
                 if (!response.isSuccessful()) {
-                    Log.d(TAG, "Algo falló");
                     return;
                 }
 
@@ -162,6 +163,7 @@ public class ProductFragment extends Fragment implements QuantityDialog.OnQuanti
 
             @Override
             public void onFailure(Call<Product> call, Throwable t) {
+                t.printStackTrace();
             }
         });
     }
@@ -208,7 +210,7 @@ public class ProductFragment extends Fragment implements QuantityDialog.OnQuanti
                     @Override
                     public void onResponse(Call<CartItem> call, Response<CartItem> response) {
                         if (!response.isSuccessful()) {
-                            Log.d(TAG, "onResponse: Algo falló");
+                            return;
                         }
 
                         navigateWithAction(ProductFragmentDirections.actionNavProductToNavCart());
@@ -235,16 +237,11 @@ public class ProductFragment extends Fragment implements QuantityDialog.OnQuanti
                 @Override
                 public void onResponse(Call<Product> call, Response<Product> response) {
                     navigateWithAction(ProductFragmentDirections.actionNavProductToNavWishList());
-                    if (!response.isSuccessful()) {
-                        Log.d(TAG, "Algo falló");
-                        return;
-                    }
                 }
 
                 @Override
                 public void onFailure(Call<Product> call, Throwable t) {
                     navigateWithAction(ProductFragmentDirections.actionNavProductToNavWishList());
-                    System.out.println("Algo falló");
                     t.printStackTrace();
                 }
             });
@@ -252,15 +249,19 @@ public class ProductFragment extends Fragment implements QuantityDialog.OnQuanti
     }
 
     private void updateViewsData() {
-        Product product = orderProduct.getProduct();
+        try {
+            Product product = orderProduct.getProduct();
 
-        tvProductTitle.setText(product.getName());
-        tvProductPrice.setText("$" + product.getPrice() / 100.0);
-        tvProductDescription.setText(product.getLongDesc());
-        String availableStock = getString(R.string.available_stock);
-        tvProductStock.setText(availableStock + " " + product.getStock());
+            tvProductTitle.setText(product.getName());
+            tvProductPrice.setText("$" + product.getPrice() / 100.0);
+            tvProductDescription.setText(product.getLongDesc());
+            String availableStock = getString(R.string.available_stock);
+            tvProductStock.setText(availableStock + " " + product.getStock());
 
-        Picasso.get().load(Uri.parse(product.getImageUrl())).into(ivProduct);
+            Picasso.get().load(Uri.parse(product.getImageUrl())).into(ivProduct);
+        } catch (IllegalStateException e){
+            e.printStackTrace();
+        }
     }
 
     @Override

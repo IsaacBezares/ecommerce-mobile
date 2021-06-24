@@ -10,7 +10,6 @@ import androidx.navigation.Navigation;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -102,7 +101,7 @@ public class SearchResultFragment extends Fragment implements OnProductClickList
             @Override
             public void onResponse(Call<ApiProducts> call, Response<ApiProducts> response) {
                 if (!response.isSuccessful()) {
-                    Log.d(TAG, "Algo falló");
+                    setScreenVisibility(false,false,true);
                     return;
                 }
 
@@ -111,7 +110,7 @@ public class SearchResultFragment extends Fragment implements OnProductClickList
                 isDataLoaded = true;
 
                 if (apiProducts.getEmbedded() == null) {
-                    setScreenVisibility(false,false,true);
+                    return;
                 }
 
                 if (apiProducts.getEmbedded() != null) {
@@ -132,7 +131,7 @@ public class SearchResultFragment extends Fragment implements OnProductClickList
 
             @Override
             public void onFailure(Call<ApiProducts> call, Throwable t) {
-
+                t.printStackTrace();
             }
         });
     }

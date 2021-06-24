@@ -37,8 +37,9 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_centerHorizontal="true"
-                android:text="@string/your_cart_is_empty"
                 android:fontFamily="@font/regular"
+                android:gravity="center"
+                android:text="@string/your_cart_is_empty"
                 android:textColor="@color/secondary"
                 android:textSize="17sp" />
 
@@ -48,6 +49,7 @@
                 android:layout_below="@id/textView"
                 android:layout_centerHorizontal="true"
                 android:fontFamily="@font/regular"
+                android:gravity="center"
                 android:text="@string/browse_the_app"
                 android:textColor="@color/gray"
                 android:textSize="17sp" />

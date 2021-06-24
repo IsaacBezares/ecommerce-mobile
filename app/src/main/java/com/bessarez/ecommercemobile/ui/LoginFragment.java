@@ -12,7 +12,6 @@ import androidx.fragment.app.Fragment;
 import androidx.navigation.NavDirections;
 import androidx.navigation.Navigation;
 
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -60,13 +59,14 @@ public class LoginFragment extends Fragment {
         });
     }
 
+
+
     private void saveUserData(String token, String email) {
         Call<RegisteredUser> call = getApiService().getRegisteredUserByEmail(email, token);
         call.enqueue(new Callback<RegisteredUser>() {
             @Override
             public void onResponse(Call<RegisteredUser> call, Response<RegisteredUser> response) {
                 if (!response.isSuccessful()) {
-                    Log.d(TAG, "Algo falló");
                     return;
                 }
 
@@ -112,7 +112,6 @@ public class LoginFragment extends Fragment {
 
             @Override
             public void onFailure(Call<ApiToken> call, Throwable t) {
-                System.out.println("Algo falló");
                 t.printStackTrace();
             }
         });

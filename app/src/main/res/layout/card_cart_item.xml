@@ -30,6 +30,7 @@
         android:fontFamily="@font/regular"
         android:textColor="@color/blue_gray"
         android:layout_marginBottom="5dp"
+        android:lines="3"
         android:textSize="15sp"
         app:layout_constraintBottom_toTopOf="@+id/btn_quantity"
         app:layout_constraintEnd_toEndOf="parent"

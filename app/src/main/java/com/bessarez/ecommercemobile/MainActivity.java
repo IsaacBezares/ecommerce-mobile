@@ -5,6 +5,7 @@ import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.Button;
 import android.widget.TextView;
 
 import com.google.android.material.navigation.NavigationView;
@@ -34,7 +35,27 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         setSupportActionBar(toolbar);
 
         DrawerLayout drawer = findViewById(R.id.drawer_layout);
+
         NavigationView navigationView = findViewById(R.id.nav_view);
+
+        View header = navigationView.getHeaderView(0);
+
+        if (isLogged()) {
+            SharedPreferences preferences = getSharedPreferences("credentials", Context.MODE_PRIVATE);
+
+            TextView tvhello = header.findViewById(R.id.hello);
+            tvhello.setText(getString(R.string.hello_comma) + " " + preferences.getString("firstName", ""));
+            tvhello.setVisibility(View.VISIBLE);
+        } else {
+            TextView tvLogin = header.findViewById(R.id.login_to_account);
+            Button btnLogin = header.findViewById(R.id.login);
+
+            tvLogin.setVisibility(View.VISIBLE);
+            btnLogin.setVisibility(View.VISIBLE);
+
+            btnLogin.setOnClickListener(this);
+        }
+
         // Passing each menu ID as a set of Ids because each
         // menu should be considered as top level destinations.
 
@@ -45,6 +66,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         NavController navController = Navigation.findNavController(this, R.id.nav_host_fragment);
         NavigationUI.setupActionBarWithNavController(this, navController, mAppBarConfiguration);
         NavigationUI.setupWithNavController(navigationView, navController);
+
     }
 
     @Override
@@ -54,30 +76,10 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                 || super.onSupportNavigateUp();
     }
 
-    @Override
-    protected void onStart() {
-        super.onStart();
+    private boolean isLogged(){
         SharedPreferences preferences = getSharedPreferences("credentials", Context.MODE_PRIVATE);
         String token = preferences.getString("token", "default");
-        boolean isLogged;
-        isLogged = !token.equals("default");
-
-        setAppHeaderWelcomeText(isLogged);
-    }
-
-    public void setAppHeaderWelcomeText(boolean isLogged) {
-        SharedPreferences preferences = getSharedPreferences("credentials", Context.MODE_PRIVATE);
-        NavigationView navigationView = (NavigationView) findViewById(R.id.nav_view);
-        View headerView = navigationView.getHeaderView(0);
-        TextView usernameOrLogin = (TextView) headerView.findViewById(R.id.username_or_login);
-
-        if (isLogged) {
-            String firstName = preferences.getString("firstName", "default");
-            usernameOrLogin.setText(getString(R.string.hello_comma) + firstName);
-        } else {
-            usernameOrLogin.setOnClickListener(this);
-            usernameOrLogin.setText(getString(R.string.hello_login));
-        }
+        return !token.equals("default");
     }
 
     @Override

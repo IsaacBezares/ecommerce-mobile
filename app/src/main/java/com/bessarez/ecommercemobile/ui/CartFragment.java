@@ -15,7 +15,6 @@ import androidx.navigation.Navigation;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -31,6 +30,8 @@ import com.bessarez.ecommercemobile.ui.adapters.CartItemAdapter;
 import com.bessarez.ecommercemobile.ui.dialogs.QuantityDialog;
 import com.bessarez.ecommercemobile.ui.models.CardCartItem;
 
+import java.math.BigDecimal;
+import java.math.RoundingMode;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -55,17 +56,6 @@ public class CartFragment extends Fragment implements OnItemClickListener, Quant
     private boolean isDataLoaded;
 
     @Override
-    public void onCreate(@Nullable Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        isDataLoaded = false;
-        if (isUserLoggedIn()) {
-            getCart();
-        } else {
-            navigateWithAction(CartFragmentDirections.actionNavCartToNavLogin());
-        }
-    }
-
-    @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         return inflater.inflate(R.layout.fragment_cart, container, false);
@@ -74,6 +64,13 @@ public class CartFragment extends Fragment implements OnItemClickListener, Quant
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
+
+        isDataLoaded = false;
+        if (isUserLoggedIn()) {
+            getCart();
+        } else {
+            navigateWithAction(CartFragmentDirections.actionNavCartToNavLogin());
+        }
 
         loadingScreen = view.findViewById(R.id.loading_layout);
         loadedScreen = view.findViewById(R.id.loaded_layout);
@@ -122,7 +119,6 @@ public class CartFragment extends Fragment implements OnItemClickListener, Quant
             @Override
             public void onResponse(Call<Cart> call, Response<Cart> response) {
                 if (!response.isSuccessful()) {
-                    Log.d(TAG, "onResponse: Algo falló");
                     return;
                 }
 
@@ -172,9 +168,6 @@ public class CartFragment extends Fragment implements OnItemClickListener, Quant
                 call.enqueue(new Callback<Void>() {
                     @Override
                     public void onResponse(Call<Void> call, Response<Void> response) {
-                        if (!response.isSuccessful()) {
-                            Log.d(TAG, "onResponse: Algo falló");
-                        }
                     }
 
                     @Override
@@ -214,9 +207,6 @@ public class CartFragment extends Fragment implements OnItemClickListener, Quant
         call.enqueue(new Callback<CartItem>() {
             @Override
             public void onResponse(Call<CartItem> call, Response<CartItem> response) {
-                if (!response.isSuccessful()) {
-                    Log.d(TAG, "onResponse: Algo falló");
-                }
             }
 
             @Override
@@ -231,7 +221,10 @@ public class CartFragment extends Fragment implements OnItemClickListener, Quant
                 .map(item -> item.getPrice() * item.getQuantity())
                 .reduce(0.0, Double::sum);
 
-        tvTotalPrice.setText(String.valueOf(totalPrice));
+        BigDecimal bd = new BigDecimal(Double.toString(totalPrice));
+        bd = bd.setScale(2, RoundingMode.HALF_UP);
+
+        tvTotalPrice.setText(String.valueOf(bd));
     }
 
     private boolean isUserLoggedIn() {

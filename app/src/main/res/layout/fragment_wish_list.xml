@@ -38,8 +38,9 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_centerHorizontal="true"
-                android:text="@string/you_have_no_products_on_your_wish_list"
                 android:fontFamily="@font/regular"
+                android:gravity="center"
+                android:text="@string/you_have_no_products_on_your_wish_list"
                 android:textColor="@color/secondary"
                 android:textSize="17sp" />
 
@@ -49,6 +50,7 @@
                 android:layout_below="@id/textView"
                 android:layout_centerHorizontal="true"
                 android:fontFamily="@font/regular"
+                android:gravity="center"
                 android:text="@string/browse_the_app"
                 android:textColor="@color/gray"
                 android:textSize="17sp" />
